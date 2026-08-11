@@ -83,6 +83,8 @@
   .insight-body.loading{ color: var(--ink-soft); font-family: var(--mono); font-size:11px; }
   .insight-body.muted{ color: var(--ink-soft); font-size:12.5px; }
 
+  .rail-hint{ font-size: 11.5px; line-height:1.5; color: var(--ink-soft); margin: 0 0 18px; padding: 10px 12px; background: var(--paper2); border-radius: 8px; }
+
   .rail{ position:relative; padding-left: 30px; }
   .rail-line{ position:absolute; left: 9px; top: 10px; bottom: 10px; width:2px; background: linear-gradient(180deg, var(--coral), var(--sage)); opacity:0.35; }
   .anchor{ position:relative; margin-bottom: 22px; }
@@ -174,6 +176,10 @@
   .build-q .hint{ font-size: 12px; color: var(--ink-soft); margin-bottom: 10px; line-height:1.4; }
   .build-q textarea{ width:100%; background: var(--cream); border: 1px solid var(--line); border-radius: 8px; color: var(--ink); font-family: var(--body); font-size: 13px; padding: 10px; resize: vertical; }
   .build-q textarea:focus{ outline:none; border-color: var(--marigold-deep); }
+  .build-intro b{ color: var(--marigold-deep); font-weight:600; }
+  .example-chips{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+  .chip{ font-family: var(--body); font-size: 12px; color: var(--marigold-deep); background: #FFF3DD; border: 1px solid #EBD19B; border-radius: 999px; padding: 5px 11px; cursor:pointer; transition: all 150ms ease; }
+  .chip:hover{ background: var(--marigold); color: #FFFDF8; border-color: var(--marigold); }
   .build-actions{ display:flex; justify-content:space-between; align-items:center; margin-top: 8px; gap:10px; }
   .build-error{ font-size: 12px; color: var(--rose); margin-top: -8px; margin-bottom: 14px; display:none; }
   .build-error.show{ display:block; }
@@ -261,6 +267,8 @@
         <div id="insightBody" class="insight-body"></div>
       </div>
 
+      <p class="rail-hint">Checklist items are things you do in the moment. Any field underneath is a quick note you type in when you check back in here — not something you write during the moment itself.</p>
+
       <div id="anchorsRoot" class="rail">
         <div class="rail-line"></div>
         <div class="status">Setting up your anchors…</div>
@@ -281,32 +289,52 @@
     <div id="buildView" style="display:none">
       <div class="build-intro">
         <h2>Build your own system</h2>
-        <p>An anchor attaches a new habit to something you already do without fail. Answer these four, and we'll set up a starting system around your own life — you can rename, rewrite, or add to any of it afterward.</p>
+        <p>Here's how this works: you tell us one moment that already happens every day — like "first sip of coffee." We turn that into an <b>anchor</b>: a fixed point in your day. From then on, whenever that moment happens, you come back to this app and check off a short list tied to it. Four moments, four anchors — a simple system built around your actual day, not someone else's.</p>
       </div>
 
       <div class="build-q">
         <div class="qnum">01 — MORNING</div>
-        <label>What's the first thing you do every day, without fail?</label>
-        <div class="hint">Coffee, the first alarm, brushing your teeth — the thing that already happens no matter what.</div>
-        <textarea id="q1" rows="2" placeholder="e.g. The first sip of coffee"></textarea>
+        <label>What's the very first thing you do every morning — no matter what?</label>
+        <div class="hint">Something so automatic you don't even think about it. Tap an example or type your own.</div>
+        <div class="example-chips" data-target="q1">
+          <button type="button" class="chip">First sip of coffee</button>
+          <button type="button" class="chip">First alarm going off</button>
+          <button type="button" class="chip">Brushing my teeth</button>
+        </div>
+        <textarea id="q1" rows="2" placeholder="Type your own, or tap an example above"></textarea>
       </div>
       <div class="build-q">
         <div class="qnum">02 — MOVEMENT</div>
-        <label>When are you already moving during the day?</label>
-        <div class="hint">A workout, a walk, the commute, even just standing up from your desk.</div>
-        <textarea id="q2" rows="2" placeholder="e.g. The end of my afternoon walk"></textarea>
+        <label>When is your body already moving during the day?</label>
+        <div class="hint">Doesn't have to be exercise — any point you're already up and moving.</div>
+        <div class="example-chips" data-target="q2">
+          <button type="button" class="chip">End of my walk</button>
+          <button type="button" class="chip">Getting up from my desk</button>
+          <button type="button" class="chip">My commute</button>
+        </div>
+        <textarea id="q2" rows="2" placeholder="Type your own, or tap an example above"></textarea>
       </div>
       <div class="build-q">
         <div class="qnum">03 — FOCUS</div>
-        <label>When do you have (or want) a block of time for reading, learning, or focused work?</label>
-        <div class="hint">Doesn't need to exist yet — just when it would realistically fit.</div>
-        <textarea id="q3" rows="2" placeholder="e.g. Lunch break, or right after work"></textarea>
+        <label>When could you set aside time to focus on one thing, on purpose?</label>
+        <div class="hint">Pick a time that could realistically work, even if you're not doing it yet.</div>
+        <div class="example-chips" data-target="q3">
+          <button type="button" class="chip">Lunch break</button>
+          <button type="button" class="chip">Right after work</button>
+          <button type="button" class="chip">First 20 minutes at my desk</button>
+        </div>
+        <textarea id="q3" rows="2" placeholder="Type your own, or tap an example above"></textarea>
       </div>
       <div class="build-q">
         <div class="qnum">04 — EVENING</div>
-        <label>What's something you do every night before bed?</label>
-        <div class="hint">Tea, brushing your teeth, plugging in your phone — the reliable last thing.</div>
-        <textarea id="q4" rows="2" placeholder="e.g. Making evening tea"></textarea>
+        <label>What's the very last thing you do every night before bed?</label>
+        <div class="hint">Something reliable — it already happens, no matter what kind of day it was.</div>
+        <div class="example-chips" data-target="q4">
+          <button type="button" class="chip">Making tea</button>
+          <button type="button" class="chip">Brushing my teeth</button>
+          <button type="button" class="chip">Plugging in my phone</button>
+        </div>
+        <textarea id="q4" rows="2" placeholder="Type your own, or tap an example above"></textarea>
       </div>
 
       <div class="build-error" id="buildError">All four answers need at least a few words.</div>
@@ -994,8 +1022,8 @@ const BUILD_QUESTIONS = [
     purpose: 'Turn this moment into the load-bearing point the rest of your morning attaches to.',
     tolerance: 'Do the smallest version rather than skip it — even one item still counts.',
     signal_text: "You feel like the day started with you in charge of it, not the phone.",
-    items: ['A glass of water first', 'Phone face-down for the first few minutes', 'One line written down before you move on'],
-    fields: [{ label: 'One line', field_type: 'text' }],
+    items: ['A full glass of water', 'Phone stays away for the first few minutes', 'Jot something down on paper before you move on'],
+    fields: [{ label: 'What you wrote', field_type: 'text' }],
   },
   {
     key: 'q2', name: 'Movement Anchor',
@@ -1010,7 +1038,7 @@ const BUILD_QUESTIONS = [
     purpose: 'Make sure what you take in during this block is chosen, not just whatever shows up.',
     tolerance: 'Ten minutes still counts. Skipping means you owe yourself a double next time — no shame spiral.',
     signal_text: 'You notice yourself thinking about it during the day, not just consuming and moving on.',
-    items: ['20–30 minutes on one thing, chosen ahead of time', 'One takeaway written down'],
+    items: ['20–30 minutes on one thing, chosen ahead of time'],
     fields: [{ label: 'Source', field_type: 'text' }, { label: 'Takeaway', field_type: 'text' }],
   },
   {
@@ -1106,6 +1134,15 @@ async function init(){
   el('#enterBuildBtn').addEventListener('click', showBuildView);
   el('#buildCancelBtn').addEventListener('click', hideBuildView);
   el('#buildSubmitBtn').addEventListener('click', submitBuildForm);
+  document.querySelectorAll('.example-chips').forEach(group => {
+    const targetId = group.dataset.target;
+    group.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        el('#' + targetId).value = chip.textContent;
+        el('#' + targetId).focus();
+      });
+    });
+  });
   el('#viewHistoryBtn').addEventListener('click', async () => {
     setView('history');
     el('#historyList').innerHTML = '<div class="history-empty">Loading…</div>';
