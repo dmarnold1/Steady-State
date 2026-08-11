@@ -162,6 +162,12 @@
 
   .btn.full{ display:block; width:100%; text-align:center; padding:12px 14px; font-size:11px; }
 
+  .explainer{ margin-bottom: 22px; }
+  .explainer h2{ font-family: var(--display); font-weight:600; font-size: 21px; margin: 0 0 10px; color: var(--ink); }
+  .explainer p{ font-size: 13.5px; line-height:1.6; color: var(--ink-soft); margin: 0 0 10px; }
+  .explainer p:last-child{ margin-bottom:0; }
+  .explainer b{ color: var(--ink); font-weight:600; }
+
   .hero-art{ border-radius: 20px; overflow:hidden; margin-bottom: 20px; background: linear-gradient(180deg, #FFFCF6, var(--surface)); border: 1px solid var(--line); box-shadow: 0 4px 20px rgba(38,54,44,0.06); }
   .hero-art-svg{ width:100%; height: 150px; display:block; }
 
@@ -189,9 +195,6 @@
   .build-q textarea{ width:100%; background: var(--cream); border: 1px solid var(--line); border-radius: 8px; color: var(--ink); font-family: var(--body); font-size: 13px; padding: 10px; resize: vertical; }
   .build-q textarea:focus{ outline:none; border-color: var(--marigold-deep); }
   .build-intro b{ color: var(--marigold-deep); font-weight:600; }
-  .example-chips{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
-  .chip{ font-family: var(--body); font-size: 12px; color: var(--marigold-deep); background: #FFF3DD; border: 1px solid #EBD19B; border-radius: 999px; padding: 5px 11px; cursor:pointer; transition: all 150ms ease; }
-  .chip:hover{ background: var(--marigold); color: #FFFDF8; border-color: var(--marigold); }
   .build-actions{ display:flex; justify-content:space-between; align-items:center; margin-top: 8px; gap:10px; }
   .build-error{ font-size: 12px; color: var(--rose); margin-top: -8px; margin-bottom: 14px; display:none; }
   .build-error.show{ display:block; }
@@ -248,6 +251,12 @@
     </div>
 
     <div id="introView" style="display:none">
+      <div class="explainer">
+        <h2>What is Steady State?</h2>
+        <p>Steady State helps you build small systems around your day. An anchor is a moment that already happens without fail, like your morning coffee or the second you get into bed. You attach a short checklist to that moment, and each day you check off what you actually did.</p>
+        <p><b>How to use it:</b> look through the example below to see a full working system in action, or answer four quick questions to build one around your own day. Either way, you'll check in daily, build up a real history, and get a short report on what's working and what to change.</p>
+      </div>
+
       <div class="hero-art">
         <svg viewBox="0 0 600 210" class="hero-art-svg" preserveAspectRatio="xMidYMid slice">
           <defs>
@@ -275,14 +284,14 @@
       <div class="intro-wrap">
         <div class="choice-card">
           <div class="eyebrow">Example system</div>
-          <h3>McCain's Systems</h3>
+          <h3>The Steady State Example</h3>
           <p>See a full working example. Four anchors are already built out, ready for you to look through before building your own. You can also just use it as-is.</p>
           <button class="btn full" id="enterDefaultBtn">See the example →</button>
         </div>
         <div class="choice-card highlight">
           <div class="eyebrow">Built for you</div>
           <h3>Build Your Own System</h3>
-          <p>Answer four quick questions about your day and get a full four-anchor system built around your own life, with the same depth as McCain's, just yours.</p>
+          <p>Answer four quick questions about your day and get a full four-anchor system built around your own life, with the same depth as the example, just yours.</p>
           <button class="btn primary full" id="enterBuildBtn">Build My Own System →</button>
         </div>
       </div>
@@ -325,46 +334,26 @@
       <div class="build-q">
         <div class="qnum"><svg class="qnum-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Step 1: Morning</div>
         <label>What's the first thing you do every morning, no matter what?</label>
-        <div class="hint">Something so automatic you don't even think about it. Try one of these, or write your own.</div>
-        <div class="example-chips" data-target="q1">
-          <button type="button" class="chip">First sip of coffee</button>
-          <button type="button" class="chip">Turning off your alarm</button>
-          <button type="button" class="chip">Brushing my teeth</button>
-        </div>
-        <textarea id="q1" rows="2" placeholder="Type your own, or tap an example above"></textarea>
+        <div class="hint">Something so automatic you don't even think about it.</div>
+        <textarea id="q1" rows="2" placeholder="Type your answer here"></textarea>
       </div>
       <div class="build-q">
         <div class="qnum"><svg class="qnum-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2 -4 4 -4 6 0s4 4 6 0s4 -4 6 0"/><path d="M2 17c2 -4 4 -4 6 0s4 4 6 0s4 -4 6 0" opacity="0.5"/></svg>Step 2: Movement</div>
         <label>When does your body already move during the day?</label>
         <div class="hint">Any point where you're physically up and moving, not necessarily exercise.</div>
-        <div class="example-chips" data-target="q2">
-          <button type="button" class="chip">Getting out of bed</button>
-          <button type="button" class="chip">After a workout</button>
-          <button type="button" class="chip">Stretching after sitting a while</button>
-        </div>
-        <textarea id="q2" rows="2" placeholder="Type your own, or tap an example above"></textarea>
+        <textarea id="q2" rows="2" placeholder="Type your answer here"></textarea>
       </div>
       <div class="build-q">
         <div class="qnum"><svg class="qnum-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="6.2" opacity="0.6"/><circle cx="12" cy="12" r="9.6" opacity="0.3"/></svg>Step 3: Focus</div>
         <label>Where in your day could 20 to 30 minutes go toward something worth learning or reading?</label>
         <div class="hint">That's it, only 20 to 30 minutes. Pick a time that could realistically work, even if you're not doing it yet.</div>
-        <div class="example-chips" data-target="q3">
-          <button type="button" class="chip">Lunch break</button>
-          <button type="button" class="chip">Right after work</button>
-          <button type="button" class="chip">First 20 minutes at my desk</button>
-        </div>
-        <textarea id="q3" rows="2" placeholder="Type your own, or tap an example above"></textarea>
+        <textarea id="q3" rows="2" placeholder="Type your answer here"></textarea>
       </div>
       <div class="build-q">
         <div class="qnum"><svg class="qnum-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/><circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" stroke="none"/></svg>Step 4: Evening</div>
         <label>What's the last thing you do every night before bed?</label>
         <div class="hint">Something reliable. It already happens, no matter what kind of day it was.</div>
-        <div class="example-chips" data-target="q4">
-          <button type="button" class="chip">Making tea</button>
-          <button type="button" class="chip">Brushing my teeth</button>
-          <button type="button" class="chip">Plugging in my phone</button>
-        </div>
-        <textarea id="q4" rows="2" placeholder="Type your own, or tap an example above"></textarea>
+        <textarea id="q4" rows="2" placeholder="Type your answer here"></textarea>
       </div>
 
       <div class="build-error" id="buildError">All four answers need at least a few words.</div>
@@ -444,7 +433,7 @@ async function ensureProfile(userId){
   if(!profile){ await supabase.from('profiles').insert({ user_id: userId }); }
 }
 
-// Activates McCain's default system for this user — reuses a previously-cloned
+// Activates the Steady State example system for this user. Reuses a previously-cloned
 // copy if one exists (so edits aren't lost by switching back and forth),
 // otherwise clones fresh from the template.
 async function activateDefaultSystem(userId){
@@ -1178,7 +1167,7 @@ async function enterDefaultSystem(){
     console.error(err);
     showAuthError(err);
   }finally{
-    btn.disabled = false; btn.textContent = "Enter McCain's Systems →";
+    btn.disabled = false; btn.textContent = "See the example →";
   }
 }
 
@@ -1197,15 +1186,6 @@ async function init(){
   el('#enterBuildBtn').addEventListener('click', showBuildView);
   el('#buildCancelBtn').addEventListener('click', hideBuildView);
   el('#buildSubmitBtn').addEventListener('click', submitBuildForm);
-  document.querySelectorAll('.example-chips').forEach(group => {
-    const targetId = group.dataset.target;
-    group.querySelectorAll('.chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        el('#' + targetId).value = chip.textContent;
-        el('#' + targetId).focus();
-      });
-    });
-  });
   el('#viewHistoryBtn').addEventListener('click', async () => {
     setView('history');
     el('#historyList').innerHTML = '<div class="history-empty">Loading…</div>';
