@@ -14,7 +14,7 @@
 <link rel="icon" href="icon-192.png" type="image/png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root{
     --cream: #FBF7EE; --paper2: #F2EAD6; --surface: #FFFFFF;
@@ -27,9 +27,12 @@
   html,body{margin:0;padding:0;}
   body{
     background:
-      radial-gradient(900px 500px at 15% -8%, rgba(224,120,86,0.10), transparent 60%),
-      radial-gradient(700px 500px at 100% 10%, rgba(126,155,128,0.10), transparent 55%),
+      radial-gradient(1000px 560px at 12% -10%, rgba(224,120,86,0.13), transparent 58%),
+      radial-gradient(800px 560px at 105% 5%, rgba(126,155,128,0.14), transparent 55%),
+      radial-gradient(700px 500px at 50% 115%, rgba(226,162,58,0.10), transparent 55%),
+      radial-gradient(500px 400px at 85% 60%, rgba(192,107,114,0.06), transparent 60%),
       var(--cream);
+    background-attachment: fixed;
     color: var(--ink); font-family: var(--body); min-height: 100vh; -webkit-font-smoothing: antialiased;
   }
   @media (prefers-reduced-motion: reduce){ *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; } }
@@ -46,6 +49,7 @@
   .brand{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
   .brand h1{ font-family: var(--display); font-optical-sizing:auto; font-weight:600; font-size: 26px; letter-spacing: -0.01em; margin:0; color: var(--ink); }
   .brand h1 .dot{ color: var(--coral); }
+  .wordmark-tagline{ font-family: var(--display); font-style: italic; font-weight:500; font-size: 14px; color: var(--ink-soft); margin: 2px 0 0; }
   .brand .date{ font-family: var(--mono); font-size: 11px; color: var(--ink-soft); letter-spacing: 0.06em; text-transform:uppercase; }
   .tagline{ font-family: var(--mono); font-size: 11px; color: var(--ink-soft); letter-spacing: 0.04em; margin-top:-6px; display:flex; justify-content:space-between; align-items:center; gap:10px; }
   .tagline span.name{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -89,7 +93,8 @@
   .rail-line{ position:absolute; left: 9px; top: 10px; bottom: 10px; width:2px; background: linear-gradient(180deg, var(--coral), var(--sage)); opacity:0.35; }
   .anchor{ position:relative; margin-bottom: 22px; }
   .anchor:last-child{ margin-bottom: 0; }
-  .node{ position:absolute; left: -30px; top: 20px; width: 20px; height:20px; border-radius:50%; background: var(--surface); border: 2px solid var(--line); display:flex; align-items:center; justify-content:center; font-family: var(--mono); font-size: 10px; color: var(--ink-soft); transition: all 300ms ease; }
+  .node{ position:absolute; left: -32px; top: 18px; width: 24px; height:24px; border-radius:50%; background: var(--surface); border: 2px solid var(--line); display:flex; align-items:center; justify-content:center; font-family: var(--mono); font-size: 10px; color: var(--ink-soft); transition: all 300ms ease; }
+  .node svg{ width: 13px; height: 13px; }
   .anchor.complete .node{ border-color: var(--marigold); color: var(--marigold-deep); background: #FFF6E6; box-shadow: 0 0 0 4px rgba(226,162,58,0.15); }
 
   .card{ background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 18px 16px; transition: border-color 300ms ease, box-shadow 300ms ease; box-shadow: 0 1px 3px rgba(38,54,44,0.04); }
@@ -97,9 +102,12 @@
 
   .card-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
   .trigger{ font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--marigold-deep); margin-bottom: 6px; font-weight:700; }
-  .trigger::before{ content: 'TRIGGER — '; color: var(--ink-soft); font-weight:400; }
+  .trigger::before{ content: 'TRIGGER: '; color: var(--ink-soft); font-weight:400; }
   .aname{ font-family: var(--display); font-weight:600; font-size: 19px; margin: 0 0 4px; color: var(--ink); }
   .purpose{ font-size: 13px; line-height:1.55; color: var(--ink-soft); margin: 0 0 14px; }
+
+  .research-fact{ background: linear-gradient(135deg, #FFF3DD, #FFEFE4); border: 1px solid #EBD19B; border-radius: 10px; padding: 11px 13px; font-size: 12px; line-height:1.55; color: var(--ink); margin: 0 0 14px; }
+  .research-fact .rf-label{ font-family: var(--mono); font-size: 9.5px; letter-spacing:0.08em; text-transform:uppercase; color: var(--marigold-deep); font-weight:700; margin-bottom: 4px; display:flex; align-items:center; gap:5px; }
 
   .items{ display:flex; flex-direction:column; gap:9px; margin-bottom: 10px; }
   .item{ display:flex; align-items:flex-start; gap:10px; cursor:pointer; user-select:none; }
@@ -154,6 +162,9 @@
 
   .btn.full{ display:block; width:100%; text-align:center; padding:12px 14px; font-size:11px; }
 
+  .hero-art{ border-radius: 20px; overflow:hidden; margin-bottom: 20px; background: linear-gradient(180deg, #FFFCF6, var(--surface)); border: 1px solid var(--line); box-shadow: 0 4px 20px rgba(38,54,44,0.06); }
+  .hero-art-svg{ width:100%; height: 150px; display:block; }
+
   .intro-lead{ font-size:13.5px; color:var(--ink-soft); line-height:1.6; margin: 0 0 18px; }
   .intro-wrap{ display:flex; flex-direction:column; gap:14px; }
   .choice-card{ border:1px solid var(--line); background:var(--surface); border-radius: 16px; padding:22px; }
@@ -171,7 +182,8 @@
   .build-intro h2{ font-family: var(--display); font-weight:600; font-size: 22px; margin: 0 0 8px; color: var(--ink); }
   .build-intro p{ font-size: 13px; line-height:1.6; color: var(--ink-soft); margin:0; }
   .build-q{ background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin-bottom: 16px; }
-  .build-q .qnum{ font-family: var(--mono); font-size: 10px; letter-spacing:0.08em; color: var(--marigold-deep); margin-bottom: 6px; font-weight:700; }
+  .build-q .qnum{ font-family: var(--mono); font-size: 10px; letter-spacing:0.08em; color: var(--marigold-deep); margin-bottom: 6px; font-weight:700; display:flex; align-items:center; gap:6px; }
+  .qnum-icon{ width:14px; height:14px; flex:0 0 auto; }
   .build-q label{ display:block; font-family: var(--display); font-size: 16px; font-weight:600; color: var(--ink); margin-bottom: 4px; }
   .build-q .hint{ font-size: 12px; color: var(--ink-soft); margin-bottom: 10px; line-height:1.4; }
   .build-q textarea{ width:100%; background: var(--cream); border: 1px solid var(--line); border-radius: 8px; color: var(--ink); font-family: var(--body); font-size: 13px; padding: 10px; resize: vertical; }
@@ -218,6 +230,7 @@
         <h1>Steady State<span class="dot">.</span></h1>
         <div class="date" id="todayLabel">—</div>
       </div>
+      <p class="wordmark-tagline">Small rituals, real momentum.</p>
     </div>
 
     <div id="systemHeader" style="display:none">
@@ -235,6 +248,23 @@
     </div>
 
     <div id="introView" style="display:none">
+      <div class="hero-art">
+        <svg viewBox="0 0 600 210" class="hero-art-svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="heroWaveFront" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#7E9B80" />
+              <stop offset="55%" stop-color="#E2A23A" />
+              <stop offset="100%" stop-color="#E07856" />
+            </linearGradient>
+          </defs>
+          <circle cx="120" cy="62" r="46" fill="#E2A23A" opacity="0.10" />
+          <circle cx="120" cy="62" r="32" fill="#E2A23A" opacity="0.16" />
+          <circle cx="120" cy="62" r="19" fill="#E2A23A" opacity="0.9" />
+          <path d="M0,150 C90,120 180,168 270,142 C360,116 450,158 600,128 L600,210 L0,210 Z" fill="#7E9B80" opacity="0.28" />
+          <path d="M0,172 C110,148 210,186 310,164 C420,140 500,178 600,156 L600,210 L0,210 Z" fill="#E07856" opacity="0.30" />
+          <path d="M0,192 C120,174 230,204 330,186 C430,168 520,200 600,182 L600,210 L0,210 Z" fill="url(#heroWaveFront)" opacity="0.85" />
+        </svg>
+      </div>
       <div id="continueBanner" class="choice-card" style="display:none; margin-bottom:16px;">
         <div class="eyebrow">Welcome back</div>
         <h3 id="continueName">Your system</h3>
@@ -246,13 +276,13 @@
         <div class="choice-card">
           <div class="eyebrow">Example system</div>
           <h3>McCain's Systems</h3>
-          <p>See a full working example — four anchors already built out — before you build your own. You can also just use it as-is.</p>
+          <p>See a full working example. Four anchors are already built out, ready for you to look through before building your own. You can also just use it as-is.</p>
           <button class="btn full" id="enterDefaultBtn">See the example →</button>
         </div>
         <div class="choice-card highlight">
           <div class="eyebrow">Built for you</div>
           <h3>Build Your Own System</h3>
-          <p>Answer four quick questions about your day and get a full four-anchor system generated around your own life — same depth as McCain's, just yours.</p>
+          <p>Answer four quick questions about your day and get a full four-anchor system built around your own life, with the same depth as McCain's, just yours.</p>
           <button class="btn primary full" id="enterBuildBtn">Build My Own System →</button>
         </div>
       </div>
@@ -267,7 +297,7 @@
         <div id="insightBody" class="insight-body"></div>
       </div>
 
-      <p class="rail-hint">Checklist items are things you do in the moment. Any field underneath is a quick note you type in when you check back in here — not something you write during the moment itself.</p>
+      <p class="rail-hint">Checklist items are things you do in the moment. Any field underneath is a quick note you type in when you check back in here, not something you write during the moment itself.</p>
 
       <div id="anchorsRoot" class="rail">
         <div class="rail-line"></div>
@@ -278,7 +308,7 @@
 
       <div class="streak">
         <div class="streak-head">
-          <div class="streak-title">14-day load history</div>
+          <div class="streak-title">Your last two weeks</div>
           <button class="switch-link" id="viewHistoryBtn">View full history →</button>
         </div>
         <div class="streak-row" id="streakRow"></div>
@@ -289,35 +319,35 @@
     <div id="buildView" style="display:none">
       <div class="build-intro">
         <h2>Build your own system</h2>
-        <p>Here's how this works: you tell us one moment that already happens every day — like "first sip of coffee." We turn that into an <b>anchor</b>: a fixed point in your day. From then on, whenever that moment happens, you come back to this app and check off a short list tied to it. Four moments, four anchors — a simple system built around your actual day, not someone else's.</p>
+        <p>Here's how this works. You tell us one moment that already happens in your day, every day, like turning off your alarm. We turn that into what we call an anchor: a fixed point you build on. From then on, whenever that moment happens, you come back here and check off a short list tied to it. Four moments become four anchors, and together they make a simple system built around your actual day, not someone else's.</p>
       </div>
 
       <div class="build-q">
-        <div class="qnum">01 — MORNING</div>
-        <label>What's the very first thing you do every morning — no matter what?</label>
-        <div class="hint">Something so automatic you don't even think about it. Tap an example or type your own.</div>
+        <div class="qnum"><svg class="qnum-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Step 1: Morning</div>
+        <label>What's the first thing you do every morning, no matter what?</label>
+        <div class="hint">Something so automatic you don't even think about it. Try one of these, or write your own.</div>
         <div class="example-chips" data-target="q1">
           <button type="button" class="chip">First sip of coffee</button>
-          <button type="button" class="chip">First alarm going off</button>
+          <button type="button" class="chip">Turning off your alarm</button>
           <button type="button" class="chip">Brushing my teeth</button>
         </div>
         <textarea id="q1" rows="2" placeholder="Type your own, or tap an example above"></textarea>
       </div>
       <div class="build-q">
-        <div class="qnum">02 — MOVEMENT</div>
-        <label>When is your body already moving during the day?</label>
-        <div class="hint">Doesn't have to be exercise — any point you're already up and moving.</div>
+        <div class="qnum"><svg class="qnum-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2 -4 4 -4 6 0s4 4 6 0s4 -4 6 0"/><path d="M2 17c2 -4 4 -4 6 0s4 4 6 0s4 -4 6 0" opacity="0.5"/></svg>Step 2: Movement</div>
+        <label>When does your body already move during the day?</label>
+        <div class="hint">Any point where you're physically up and moving, not necessarily exercise.</div>
         <div class="example-chips" data-target="q2">
-          <button type="button" class="chip">End of my walk</button>
-          <button type="button" class="chip">Getting up from my desk</button>
-          <button type="button" class="chip">My commute</button>
+          <button type="button" class="chip">Getting out of bed</button>
+          <button type="button" class="chip">After a workout</button>
+          <button type="button" class="chip">Stretching after sitting a while</button>
         </div>
         <textarea id="q2" rows="2" placeholder="Type your own, or tap an example above"></textarea>
       </div>
       <div class="build-q">
-        <div class="qnum">03 — FOCUS</div>
-        <label>When could you set aside time to focus on one thing, on purpose?</label>
-        <div class="hint">Pick a time that could realistically work, even if you're not doing it yet.</div>
+        <div class="qnum"><svg class="qnum-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="6.2" opacity="0.6"/><circle cx="12" cy="12" r="9.6" opacity="0.3"/></svg>Step 3: Focus</div>
+        <label>Where in your day could 20 to 30 minutes go toward something worth learning or reading?</label>
+        <div class="hint">That's it, only 20 to 30 minutes. Pick a time that could realistically work, even if you're not doing it yet.</div>
         <div class="example-chips" data-target="q3">
           <button type="button" class="chip">Lunch break</button>
           <button type="button" class="chip">Right after work</button>
@@ -326,9 +356,9 @@
         <textarea id="q3" rows="2" placeholder="Type your own, or tap an example above"></textarea>
       </div>
       <div class="build-q">
-        <div class="qnum">04 — EVENING</div>
-        <label>What's the very last thing you do every night before bed?</label>
-        <div class="hint">Something reliable — it already happens, no matter what kind of day it was.</div>
+        <div class="qnum"><svg class="qnum-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/><circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" stroke="none"/></svg>Step 4: Evening</div>
+        <label>What's the last thing you do every night before bed?</label>
+        <div class="hint">Something reliable. It already happens, no matter what kind of day it was.</div>
         <div class="example-chips" data-target="q4">
           <button type="button" class="chip">Making tea</button>
           <button type="button" class="chip">Brushing my teeth</button>
@@ -559,7 +589,7 @@ async function ensureDailyInsight(userSystemId, forceRegenerate){
     el('#regenInsightBtn').style.display = 'inline';
   }catch(err){
     console.error(err);
-    setInsightBody('Could not generate a report right now — try again in a bit.', 'muted');
+    setInsightBody('Could not generate a report right now. Try again in a bit.', 'muted');
   }
 }
 
@@ -684,7 +714,7 @@ function renderHistory(rows){
   list.innerHTML = '';
 
   if(!rows.length){
-    list.innerHTML = '<div class="history-empty">No entries yet — check off your first anchor to start building history.</div>';
+    list.innerHTML = '<div class="history-empty">No entries yet. Check off your first anchor to start building history.</div>';
     return;
   }
 
@@ -915,12 +945,36 @@ function renderEditPanel(anchor){
   return wrap;
 }
 
+// --- Research facts: honest, sourced context for why each kind of anchor helps ---
+const RESEARCH_FACTS = {
+  morning: 'Mild dehydration, as little as 1 to 2% of body weight, measurably hurts concentration, memory, and mood, so a full glass of water genuinely helps. One honest caveat: research hasn\u2019t found morning specifically to be more powerful than any other time, it\u2019s just an easy moment to remember it.',
+  movement: 'A 2023 Columbia University study found that a 5 minute walk every 30 minutes lowered blood sugar spikes by 58% compared to sitting all day. Short, frequent movement breaks have also been shown to improve blood flow and sharpen focus more than one long session.',
+  focus: 'Memory consolidation favors little and often. Research on spaced learning consistently shows short daily sessions build retention better than occasional long ones, the same total time spread out beats a single binge.',
+  evening: 'A Baylor University sleep study (Scullin et al., 2018) found that people who spent just 5 minutes writing before bed fell asleep faster, and a to-do list format worked better than writing about the day\u2019s completed tasks.',
+};
+
+function detectAnchorCategory(anchor){
+  const n = (anchor.name || '').toLowerCase() + ' ' + (anchor.trigger_text || '').toLowerCase();
+  if(n.includes('morning') || n.includes('coffee') || n.includes('wake') || n.includes('alarm')) return 'morning';
+  if(n.includes('movement') || n.includes('walk') || n.includes('workout') || n.includes('stretch') || n.includes('move')) return 'movement';
+  if(n.includes('focus') || n.includes('input') || n.includes('read') || n.includes('learn')) return 'focus';
+  if(n.includes('evening') || n.includes('shutdown') || n.includes('night') || n.includes('bed') || n.includes('tea')) return 'evening';
+  return null;
+}
+
+const ANCHOR_ICONS = {
+  morning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>',
+  movement: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2 -4 4 -4 6 0s4 4 6 0s4 -4 6 0"/><path d="M2 17c2 -4 4 -4 6 0s4 4 6 0s4 -4 6 0" opacity="0.5"/></svg>',
+  focus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="6.2" opacity="0.6"/><circle cx="12" cy="12" r="9.6" opacity="0.3"/></svg>',
+  evening: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/><circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" stroke="none"/></svg>',
+};
+
 function renderAnchors(){
   anchorsRoot.innerHTML = '<div class="rail-line"></div>';
   if(!state.anchors.length){
     const empty = document.createElement('div');
     empty.className = 'status';
-    empty.textContent = 'No anchors yet — add one below to start building your system.';
+    empty.textContent = 'No anchors yet. Add one below to start building your system.';
     anchorsRoot.appendChild(empty);
   }
   state.anchors.forEach((anchor, idx) => {
@@ -932,7 +986,8 @@ function renderAnchors(){
 
     const node = document.createElement('div');
     node.className = 'node';
-    node.textContent = String(idx+1).padStart(2,'0');
+    const nodeCategory = detectAnchorCategory(anchor);
+    node.innerHTML = nodeCategory && ANCHOR_ICONS[nodeCategory] ? ANCHOR_ICONS[nodeCategory] : String(idx+1).padStart(2,'0');
     wrap.appendChild(node);
 
     const card = document.createElement('div');
@@ -957,6 +1012,14 @@ function renderAnchors(){
     `;
     card.appendChild(head);
     head.querySelector('[data-edit]').addEventListener('click', () => startEdit(anchor.id));
+
+    const category = detectAnchorCategory(anchor);
+    if(category && RESEARCH_FACTS[category]){
+      const fact = document.createElement('div');
+      fact.className = 'research-fact';
+      fact.innerHTML = `<div class="rf-label">🧪 Why this works</div>${escapeHtml(RESEARCH_FACTS[category])}`;
+      card.appendChild(fact);
+    }
 
     const itemsDiv = document.createElement('div');
     itemsDiv.className = 'items';
@@ -1000,7 +1063,7 @@ function renderAnchors(){
     if(anchor.tolerance){
       const tol = document.createElement('div');
       tol.className = 'tolerance';
-      tol.innerHTML = `<b>Tolerance —</b> ${escapeHtml(anchor.tolerance)}`;
+      tol.innerHTML = `<b>Tolerance:</b> ${escapeHtml(anchor.tolerance)}`;
       card.appendChild(tol);
     }
     if(anchor.signal_text){
@@ -1020,7 +1083,7 @@ const BUILD_QUESTIONS = [
   {
     key: 'q1', name: 'Morning Anchor',
     purpose: 'Turn this moment into the load-bearing point the rest of your morning attaches to.',
-    tolerance: 'Do the smallest version rather than skip it — even one item still counts.',
+    tolerance: 'Do the smallest version rather than skip it. Even one item still counts.',
     signal_text: "You feel like the day started with you in charge of it, not the phone.",
     items: ['A full glass of water', 'Phone stays away for the first few minutes', 'Jot something down on paper before you move on'],
     fields: [{ label: 'What you wrote', field_type: 'text' }],
@@ -1030,20 +1093,20 @@ const BUILD_QUESTIONS = [
     purpose: 'Use motion you already have going to bolt on the one thing that keeps slipping.',
     tolerance: 'Three minutes still counts. The system is showing up, not hitting a number.',
     signal_text: 'The tightness you\u2019ve been ignoring starts to name itself. You can point at it.',
-    items: ['A few minutes of stretching or breathing', 'No phone — music or silence'],
+    items: ['A few minutes of stretching or breathing', 'No phone, just music or silence'],
     fields: [{ label: 'Tightest or best spot today', field_type: 'text' }],
   },
   {
     key: 'q3', name: 'Focus Anchor',
     purpose: 'Make sure what you take in during this block is chosen, not just whatever shows up.',
-    tolerance: 'Ten minutes still counts. Skipping means you owe yourself a double next time — no shame spiral.',
+    tolerance: 'Ten minutes still counts. Skipping means you owe yourself a double next time, no shame spiral.',
     signal_text: 'You notice yourself thinking about it during the day, not just consuming and moving on.',
     items: ['20–30 minutes on one thing, chosen ahead of time'],
     fields: [{ label: 'Source', field_type: 'text' }, { label: 'Takeaway', field_type: 'text' }],
   },
   {
     key: 'q4', name: 'Evening Anchor',
-    purpose: 'Close the day the way you opened it — on purpose.',
+    purpose: 'Close the day the way you opened it, on purpose.',
     tolerance: 'The three-item review is the minimum. It takes about two minutes.',
     signal_text: 'Sleep gets better because you\u2019re not walking from a screen straight into bed.',
     items: ['Three-item review: what worked, what didn\u2019t, what tomorrow needs', 'Phone away for this moment'],
@@ -1098,7 +1161,7 @@ async function submitBuildForm(){
     await loadIntoMain(newSystem);
   }catch(err){
     console.error(err);
-    el('#buildError').textContent = 'Something went wrong building your system — try again.';
+    el('#buildError').textContent = 'Something went wrong building your system. Try again.';
     el('#buildError').classList.add('show');
   }finally{
     btn.disabled = false; btn.textContent = 'Build my system';
