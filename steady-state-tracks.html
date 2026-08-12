@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+<title>Steady State — Tracks</title>
+<style>
+  :root{
+    --bg: #0B0D12; --panel: #13161D; --panel-raised: #181B24; --line: #22262F;
+    --text: #F2F0EA; --muted: #8B9F9C; --good: #6FCF97; --warn: #FF6B5B;
+    --presence: #8EA6FF; --consistency: #F2B84B; --energy: #FF6B5B;
+    --serif: 'Georgia', 'Iowan Old Style', serif;
+    --sans: 'Helvetica Neue', Arial, sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--bg); color: var(--text); min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    font-family: var(--serif); padding: 24px 16px;
+  }
+  button{ font-family: inherit; cursor:pointer; }
+  .frame{ width:100%; max-width:480px; }
+  .center{ display:flex; flex-direction:column; align-items:center; text-align:center; }
+  .eyebrow{ font-size:12px; letter-spacing:2px; font-family: var(--sans); margin-bottom:14px; color: var(--muted); }
+  .h1{ font-size:38px; line-height:1.15; font-weight:400; margin:0 0 16px; }
+  .h2{ font-size:24px; line-height:1.3; font-weight:400; margin:0 0 8px; max-width:380px; }
+  .lede{ font-size:16px; line-height:1.6; color: var(--muted); font-family: var(--sans); max-width:360px; margin:0 0 8px; }
+  .why{ font-size:13px; color: var(--muted); font-family: var(--sans); margin-bottom:28px; }
+  .option-list{ display:flex; flex-direction:column; gap:10px; width:100%; }
+  .option-btn{
+    background: var(--panel); border:1px solid var(--line); border-radius:10px; color: var(--text);
+    padding:16px 18px; font-size:15px; font-family: var(--sans); text-align:left; transition: border-color .2s ease; width:100%;
+  }
+  .option-btn:hover{ border-color: var(--text); }
+  .primary-btn{
+    background: var(--text); color: var(--bg); border:none; border-radius:30px;
+    padding:14px 30px; font-size:15px; font-family: var(--sans); font-weight:600;
+  }
+  .ghost-btn{
+    background:transparent; color: var(--text); border:1px solid var(--line); border-radius:30px;
+    padding:10px 22px; font-size:13px; font-family: var(--sans);
+  }
+  .small-btn{
+    background: var(--panel); color: var(--text); border:1px solid var(--line); border-radius:20px;
+    padding:8px 14px; font-size:12px; font-family: var(--sans);
+  }
+  .panel{
+    background: var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding:18px 20px; font-family: var(--sans); width:100%;
+  }
+  .progress-row{ display:flex; gap:6px; margin-bottom:20px; }
+  .progress-dot{ width:22px; height:4px; border-radius:2px; background: var(--line); }
+  .progress-dot.on{ background: var(--text); }
+  .reset-link{
+    margin-top:28px; background:none; border:none; color: var(--muted);
+    font-size:12px; font-family: var(--sans); text-decoration:underline;
+  }
+  .stepper-row{ display:flex; align-items:center; justify-content:space-between; font-family: var(--sans); gap:16px; }
+  .stepper-btn{
+    width:30px; height:30px; border-radius:50%; background: var(--panel-raised); border:1px solid var(--line);
+    color: var(--text); font-size:16px; line-height:1; display:flex; align-items:center; justify-content:center;
+  }
+  .toggle-btn{
+    background: var(--panel-raised); border:1px solid var(--line); border-radius:20px; color: var(--muted);
+    padding:6px 16px; font-size:13px; font-family: var(--sans);
+  }
+  .idea-toggle{
+    background:none; border:none; color: var(--consistency); font-size:12.5px; font-family: var(--sans);
+    text-decoration:underline; padding:0; margin-top:10px; align-self:flex-start;
+  }
+  .chip-group{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; width:100%; }
+  .chip{
+    background: var(--panel-raised); border:1px solid var(--line); border-radius:16px; color: var(--text);
+    padding:8px 14px; font-size:12.5px; font-family: var(--sans); text-align:left; line-height:1.3;
+  }
+  .chip:hover{ border-color: var(--text); }
+  .moment-list{ display:flex; flex-direction:column; gap:12px; width:100%; text-align:left; font-family: var(--sans); }
+  .moment-card{
+    background: var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 16px;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .moment-card.done{ border-color: var(--good); background: var(--panel-raised); }
+  .moment-time{ font-size:10px; letter-spacing:1px; text-transform:uppercase; color: var(--muted); margin-bottom:4px; }
+  .moment-label{ font-size:14.5px; margin-bottom:2px; }
+  .moment-value{ font-size:12.5px; color: var(--good); }
+  .moment-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .moment-check{
+    flex:0 0 auto; width:22px; height:22px; border-radius:50%; border:1.5px solid var(--line);
+    background: var(--panel-raised); display:flex; align-items:center; justify-content:center; font-size:12px;
+  }
+  .moment-card.done .moment-check{ background: var(--good); border-color: var(--good); color: var(--bg); }
+  .moment-body{ margin-top:12px; padding-top:12px; border-top:1px dashed var(--line); }
+
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+// ============================================================
+// SUPABASE
+// Anonymous auth: each browser gets a persistent identity that the
+// RLS policies (user_id = auth.uid()) key off of. Swap in real
+// email/password or magic-link auth later without touching RLS.
+// ============================================================
+const SUPABASE_URL = "https://ntfjrtlrousluvblqhxi.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_IiaODesVMFFCUaWKSmBJog_APVhm7-u";
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+async function ensureSession() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) return session.user;
+  const { data, error } = await supabase.auth.signInAnonymously();
+  if (error) { console.error("Anonymous sign-in failed:", error.message); return null; }
+  return data.user;
+}
+
+async function saveTrackAssignment(trackId, quizScores, habitInfo) {
+  const user = await ensureSession();
+  if (!user) return;
+  const { label, trigger, sleepTarget } = habitInfo || {};
+  await supabase.from('user_track_assignments')
+    .update({ is_current: false }).eq('user_id', user.id).eq('is_current', true);
+  await supabase.from('user_track_assignments').insert({
+    user_id: user.id, track_id: trackId, quiz_scores: quizScores,
+    habit_label: label || null, habit_trigger: trigger || null,
+    sleep_target_hours: sleepTarget || null,
+    is_current: true,
+  });
+}
+
+async function fetchCurrentAssignment(trackId) {
+  const user = await ensureSession();
+  if (!user) return null;
+  const { data, error } = await supabase.from('user_track_assignments')
+    .select('habit_label, habit_trigger, sleep_target_hours').eq('user_id', user.id).eq('track_id', trackId)
+    .eq('is_current', true).order('assigned_at', { ascending: false }).limit(1).maybeSingle();
+  if (error) return null;
+  return data;
+}
+
+// Demo-only: writes the simulated 14-day history so the "simulate"
+// buttons have something real to visualize trend behavior with,
+// without needing 14 real days of check-ins yet.
+async function persistDailyLogs(trackId, days) {
+  const user = await ensureSession();
+  if (!user) return;
+  const rows = days.map((d, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (days.length - 1 - i));
+    const { day, composite, ...levers } = d;
+    return {
+      user_id: user.id, track_id: trackId, log_date: date.toISOString().slice(0, 10),
+      levers, composite_score: composite,
+    };
+  });
+  await supabase.from('daily_logs').upsert(rows, { onConflict: 'user_id,track_id,log_date' });
+}
+
+function scoreDay(track, values) {
+  if (track === 'energy') {
+    const target = state.sleepTarget || 8;
+    const sleepScore = Math.min(values.sleep_hours / target, 1) * 100;
+    const movedScore = values.moved ? 100 : 40;
+    const feelScore = (values.energy_score / 5) * 100;
+    return Math.round((sleepScore + movedScore + feelScore) / 3);
+  }
+  if (track === 'consistency') {
+    const completedScore = values.completed ? 100 : 20;
+    const streakScore = Math.min(values.streak / 10, 1) * 100;
+    return Math.round((completedScore + streakScore) / 2);
+  }
+  const feelScore = (values.presence_score / 5) * 100;
+  const distractionScore = Math.max(0, (10 - values.distraction_count) / 10) * 100;
+  return Math.round((feelScore + distractionScore) / 2);
+}
+
+async function fetchLatestLog(trackId) {
+  const user = await ensureSession();
+  if (!user) return null;
+  const { data, error } = await supabase.from('daily_logs')
+    .select('log_date, levers').eq('user_id', user.id).eq('track_id', trackId)
+    .order('log_date', { ascending: false }).limit(1);
+  if (error || !data || data.length === 0) return null;
+  return data[0];
+}
+
+async function fetchTodayLog(trackId) {
+  const user = await ensureSession();
+  if (!user) return null;
+  const today = new Date().toISOString().slice(0, 10);
+  const { data, error } = await supabase.from('daily_logs')
+    .select('log_date, levers, composite_score, moment_timestamps')
+    .eq('user_id', user.id).eq('track_id', trackId).eq('log_date', today).maybeSingle();
+  if (error) return null;
+  return data;
+}
+
+// Saves a single moment's value for today, merging it into whatever's
+// already been logged today rather than overwriting the whole day —
+// this is what lets someone log sleep in the morning and energy in
+// the evening as two separate touches instead of one end-of-day form.
+async function saveMoment(trackId, key, value) {
+  const user = await ensureSession();
+  if (!user) return null;
+  const today = new Date().toISOString().slice(0, 10);
+  const existing = await fetchTodayLog(trackId);
+  const levers = { ...(existing?.levers || {}), [key]: value };
+  const timestamps = { ...(existing?.moment_timestamps || {}), [key]: new Date().toISOString() };
+  const composite = scorePartialDay(trackId, levers);
+  const { error } = await supabase.from('daily_logs').upsert({
+    user_id: user.id, track_id: trackId, log_date: today,
+    levers, moment_timestamps: timestamps, composite_score: composite,
+    updated_at: new Date().toISOString(),
+  }, { onConflict: 'user_id,track_id,log_date' });
+  if (error) { console.error('Moment save failed:', error.message); return null; }
+  return { levers, moment_timestamps: timestamps, composite_score: composite };
+}
+
+// Checks the user's own tagged citations first, falls back to the
+// public system-generated library, and falls back again to the
+// hardcoded CITATION_LIBRARY below if the network call fails.
+async function fetchCitation(trackId, lever) {
+  const { data, error } = await supabase.from('citation_library')
+    .select('finding, why, action, source').eq('track_id', trackId).eq('lever', lever);
+  if (error || !data || data.length === 0) return null;
+  const own = data.find((r) => r.source === 'user');
+  const row = own || data[0];
+  return `${row.finding} ${row.why} ${row.action}`;
+}
+
+// ============================================================
+// DESIGN TOKENS / TRACKS / QUIZ (mirrors onboarding-prototype-v2.jsx)
+// ============================================================
+const COLORS = {
+  bg: "#0B0D12", panel: "#13161D", panelRaised: "#181B24", line: "#22262F",
+  text: "#F2F0EA", muted: "#8B8F9C", good: "#6FCF97", warn: "#FF6B5B",
+  presence: "#8EA6FF", consistency: "#F2B84B", energy: "#FF6B5B",
+};
+
+const TRACKS = {
+  presence: {
+    name: "Presence", color: COLORS.presence,
+    tagline: "Fewer scattered moments, more of you actually here.",
+    metricLabel: "Present minutes", checkin: "One grounding prompt, once a day.",
+    levers: ["distraction_count", "presence_score"],
+    leverLabels: { distraction_count: "distraction count", presence_score: "grounded feeling" },
+    moments: [
+      { key: "presence_score", time: "Midday", label: "How grounded do you feel right now? (1-5)", type: "stepper", min: 1, max: 5, step: 1,
+        guidance: "Try this: before you answer, take one slow breath and notice your feet on the floor. Rate how you feel after that, not before." },
+      { key: "distraction_count", time: "Evening", label: "How many times did you get pulled away today?", type: "stepper", min: 0, max: 20, step: 1,
+        guidance: "Try this: put your phone in another room for one stretch tomorrow, even 20 minutes — it's the easiest lever to pull on this number." },
+    ],
+  },
+  consistency: {
+    name: "Consistency", color: COLORS.consistency,
+    tagline: "Fewer dropped habits, more days that build on each other.",
+    metricLabel: "Streak completion", checkin: "A streak, and a few small pushes to get there.",
+    levers: ["completed", "streak"],
+    leverLabels: {
+      intention_set: "morning intention", obstacle_removed: "removing friction",
+      completed: "daily follow-through", streak: "streak length",
+    },
+    moments: [
+      { key: "intention_set", time: "Morning", label: "Set today's intention", type: "toggle", showsHabit: true,
+        guidance: "Try this: picture the exact moment you'll do it today, before the day gets busy." },
+      { key: "obstacle_removed", time: "Midday", label: "Make it a little easier today", type: "toggle", showsHabit: true,
+        guidance: "Try this: clear whatever's usually in the way — set it out, block the time, remove the excuse." },
+      { key: "completed", time: "Evening", label: "Did you follow through today?", type: "toggle", showsHabit: true,
+        guidance: "Try this: do the smallest version that still counts. Showing up small beats skipping entirely — you can go bigger tomorrow." },
+    ],
+  },
+  energy: {
+    name: "Energy", color: COLORS.energy,
+    tagline: "Fewer 3pm crashes, more fuel left at the end of the day.",
+    metricLabel: "Energy score", checkin: "Log your energy, pull one lever.",
+    levers: ["sleep_hours", "moved", "energy_score"],
+    leverLabels: { sleep_hours: "sleep", moved: "movement", energy_score: "self-rated energy" },
+    moments: [
+      { key: "sleep_hours", time: "Morning", label: "Log last night's sleep", type: "stepper", min: 0, max: 12, step: 0.5,
+        guidance: "Try this: if last night was short, tonight's target is just 30 minutes earlier — not a full reset. Small adjustments compound." },
+      { key: "moved", time: "Midday", label: "Have you moved today?", type: "toggle",
+        guidance: "Try this: a 10-minute walk after lunch counts. It doesn't need to be a workout to move this number." },
+      { key: "energy_score", time: "Evening", label: "Rate your energy right now (1-5)", type: "stepper", min: 1, max: 5, step: 1,
+        guidance: "Try this: rate honestly, not hopefully. An accurate low score is what lets tomorrow's plan actually help." },
+    ],
+  },
+};
+
+// Suggested starting points for the "define your habit/practice" step.
+// People land on the Presence track precisely because they don't have
+// a ready answer here — so offer real examples, not a blank box.
+const EXAMPLE_PRACTICES = {
+  presence: [
+    "One slow breath before you open your phone",
+    "Name 3 things you can see, 2 you can hear, 1 you can feel",
+    "Put your phone in another room during meals",
+    "Feel your feet on the floor before replying to a hard message",
+    "A 2-minute walk outside without your phone",
+    "Pause and notice your shoulders before starting a new task",
+  ],
+  consistency: [
+    "Floss right after brushing at night",
+    "No phone for the first 10 minutes after waking up",
+    "Read 10 pages before bed",
+    "A 10-minute walk after lunch",
+    "Write down one thing you're grateful for each night",
+  ],
+};
+
+function momentLabel(track, moment, habitLabel) {
+  return moment.label.replace("{habit}", habitLabel || "your habit");
+}
+
+// Scores whatever moments have been logged so far today, ignoring
+// ones not yet filled in — lets "today's progress" show mid-day
+// instead of waiting for every moment to be completed.
+function scorePartialDay(track, values) {
+  const present = Object.keys(values);
+  if (present.length === 0) return null;
+  if (track === "energy") {
+    const target = state.sleepTarget || 8;
+    const parts = [];
+    if ("sleep_hours" in values) parts.push(Math.min(values.sleep_hours / target, 1) * 100);
+    if ("moved" in values) parts.push(values.moved ? 100 : 40);
+    if ("energy_score" in values) parts.push((values.energy_score / 5) * 100);
+    if (parts.length === 0) return null;
+    return Math.round(parts.reduce((a, b) => a + b, 0) / parts.length);
+  }
+  if (track === "consistency") {
+    // Weighted so the actual habit (not just intending to do it) still
+    // drives the score most — the supportive moments nudge it, they
+    // don't substitute for it.
+    const weighted = [];
+    if ("intention_set" in values) weighted.push([values.intention_set ? 100 : 40, 1]);
+    if ("obstacle_removed" in values) weighted.push([values.obstacle_removed ? 100 : 40, 1]);
+    if ("completed" in values) weighted.push([values.completed ? 100 : 20, 3]);
+    if ("streak" in values) weighted.push([Math.min(values.streak / 10, 1) * 100, 2]);
+    if (weighted.length === 0) return null;
+    const totalWeight = weighted.reduce((a, [, w]) => a + w, 0);
+    return Math.round(weighted.reduce((a, [v, w]) => a + v * w, 0) / totalWeight);
+  }
+  const parts = [];
+  if ("presence_score" in values) parts.push((values.presence_score / 5) * 100);
+  if ("distraction_count" in values) parts.push(Math.max(0, (10 - values.distraction_count) / 10) * 100);
+  if (parts.length === 0) return null;
+  return Math.round(parts.reduce((a, b) => a + b, 0) / parts.length);
+}
+
+const QUESTIONS = [
+  { id: "q1", prompt: "When things start to slip, what happens first?",
+    why: "Tells us where things tend to break down.",
+    options: [
+      { label: "I get pulled into my phone and lose the thread", track: "presence", weight: 1 },
+      { label: "I skip the habit or routine I meant to do", track: "consistency", weight: 1 },
+      { label: "I just run out of steam and coast", track: "energy", weight: 1 },
+    ] },
+  { id: "q2", prompt: "How do you feel most afternoons, around 2–4pm?",
+    why: "Afternoon state is one of the clearest signals we get.",
+    options: [
+      { label: "Foggy — like I'm not really \"there\"", track: "presence", weight: 1 },
+      { label: "Fine, but I've already broken today's plan", track: "consistency", weight: 1 },
+      { label: "Drained, need caffeine or a nap", track: "energy", weight: 2 },
+    ] },
+  { id: "q3", prompt: "Think about the last habit you tried to build. What happened?",
+    why: "Past attempts predict what'll trip you up next.",
+    options: [
+      { label: "I was consistent for a week or two, then just stopped completely", track: "consistency", weight: 2 },
+      { label: "I did it, but my mind was somewhere else the whole time", track: "presence", weight: 1 },
+      { label: "I kept it up for a while, then just ran out of gas", track: "energy", weight: 1 },
+    ] },
+  { id: "q4", prompt: "What does \"a good day\" feel like to you?",
+    why: "Your definition of a win points to the right track.",
+    options: [
+      { label: "Calm, focused, not rushing from thing to thing", track: "presence", weight: 1 },
+      { label: "Everything on my list got done, no matter how", track: "consistency", weight: 1 },
+      { label: "I had energy left at the end of it", track: "energy", weight: 1 },
+    ] },
+  { id: "q5", prompt: "How's your sleep, generally?",
+    why: "Sleep disruption is a strong predictor across all three.",
+    options: [
+      { label: "Fine, but my mind won't quiet down", track: "presence", weight: 1 },
+      { label: "Inconsistent — no real bedtime routine", track: "consistency", weight: 1 },
+      { label: "Poor, and it wrecks the next day", track: "energy", weight: 2 },
+    ] },
+  { id: "q6", prompt: "What's pulled you toward an app like this?",
+    why: "Your own words about why you're here matter most.",
+    options: [
+      { label: "Wanting to feel less scattered, more grounded", track: "presence", weight: 1 },
+      { label: "Wanting to actually stick with something for once", track: "consistency", weight: 1 },
+      { label: "Wanting to stop feeling exhausted all the time", track: "energy", weight: 1 },
+    ] },
+];
+
+const TIEBREAKER = {
+  id: "q7", prompt: "If you could only fix ONE of these right now, which matters most?",
+  why: "Your first six answers were close — this one decides it.",
+  options: [
+    { label: "Being more present", track: "presence", weight: 1 },
+    { label: "Being more consistent", track: "consistency", weight: 1 },
+    { label: "Having more energy", track: "energy", weight: 1 },
+  ],
+};
+
+function scoreAnswers(answers) {
+  const score = { presence: 0, consistency: 0, energy: 0 };
+  answers.forEach((a) => { score[a.track] += a.weight; });
+  return score;
+}
+function topTwo(score) {
+  const sorted = Object.entries(score).sort((a, b) => b[1] - a[1]);
+  return { top: sorted[0], second: sorted[1] };
+}
+function activeQuestions(answers) {
+  const base = [...QUESTIONS];
+  if (answers.length === 6) {
+    const s = scoreAnswers(answers);
+    const { top, second } = topTwo(s);
+    if (top[1] - second[1] === 0) base.push(TIEBREAKER);
+  }
+  return base;
+}
+
+function makeDay(track, dayIndex, trend) {
+  const base = 78 + trend * dayIndex * 1.4;
+  const noise = (Math.sin(dayIndex * 1.7) * 6);
+  const composite = Math.max(30, Math.min(100, Math.round(base + noise)));
+  if (track === "energy") {
+    return { day: dayIndex, energy_score: Math.round(composite / 20),
+      sleep_hours: Math.round((composite / 100) * 3 + 5), moved: composite > 55, composite };
+  }
+  if (track === "consistency") {
+    return { day: dayIndex, completed: composite > 50,
+      streak: composite > 50 ? Math.max(1, Math.round(composite / 12)) : 0, composite };
+  }
+  return { day: dayIndex, presence_score: Math.round(composite / 20),
+    distraction_count: Math.max(0, Math.round((100 - composite) / 10)), composite };
+}
+function rollingAverage(days, windowSize = 7) {
+  const w = days.slice(-windowSize);
+  return Math.round(w.reduce((a, d) => a + d.composite, 0) / w.length);
+}
+function findWeakestLever(track, days) {
+  const window = days.slice(-7);
+  if (track === "energy") {
+    const avgSleep = window.reduce((a, d) => a + d.sleep_hours, 0) / window.length;
+    const avgMoved = window.filter((d) => d.moved).length / window.length;
+    const avgScore = window.reduce((a, d) => a + d.energy_score, 0) / window.length;
+    const scores = { sleep_hours: avgSleep / 8, moved: avgMoved, energy_score: avgScore / 5 };
+    return Object.entries(scores).sort((a, b) => a[1] - b[1])[0][0];
+  }
+  if (track === "consistency") {
+    const avgCompleted = window.filter((d) => d.completed).length / window.length;
+    const avgStreak = window.reduce((a, d) => a + d.streak, 0) / window.length;
+    const scores = { completed: avgCompleted, streak: avgStreak / 10 };
+    return Object.entries(scores).sort((a, b) => a[1] - b[1])[0][0];
+  }
+  const avgScore = window.reduce((a, d) => a + d.presence_score, 0) / window.length;
+  const avgDistraction = window.reduce((a, d) => a + d.distraction_count, 0) / window.length;
+  const scores = { presence_score: avgScore / 5, distraction_count: 1 - avgDistraction / 10 };
+  return Object.entries(scores).sort((a, b) => a[1] - b[1])[0][0];
+}
+
+const CITATION_LIBRARY = {
+  energy: {
+    sleep_hours: "People who sleep under six hours a night show measurably lower afternoon energy and focus the next day. That's likely what's driving your dip this week. Try adding even thirty minutes tonight and watch tomorrow's score.",
+    moved: "Even ten minutes of light movement raises circulating energy more reliably than caffeine, according to activity research. Your movement's been light this week, which tracks with the dip. A short walk after lunch is an easy lever to pull.",
+    energy_score: "Self-rated energy tends to predict next-day output better than sleep hours alone. Yours has been trending low, which usually means the dip is compounding. Naming it each day, honestly, is often the first thing that turns it around.",
+  },
+  consistency: {
+    completed: "Habit researchers find that missing a single day rarely breaks a streak's momentum, but missing two in a row usually does. You're right at that edge this week. Doing today's version, even a small one, resets the pattern.",
+    streak: "Shorter streaks are more fragile to disruption than longer ones, which is normal, not a failure. Yours has reset recently. Rebuilding from day one with an easier version of the habit tends to stick better than jumping back to full intensity.",
+  },
+  presence: {
+    distraction_count: "Frequent context-switching has been shown to slow return-to-focus time by several minutes each time it happens. Your distraction count has been climbing this week. One phone-free stretch today, even fifteen minutes, can start to reverse that.",
+    presence_score: "People who rate themselves as scattered tend to underestimate how much small grounding moments help, more than long sessions do. Your self-rating's been low this week. A single slow breath before your next task is a small, real lever.",
+  },
+};
+function getCitation(track, lever) { return CITATION_LIBRARY[track][lever]; }
+
+// ============================================================
+// SVG HELPERS
+// ============================================================
+function arcSVG(percent, color, size = 120, stroke = 10, showLabel = true) {
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const offset = c - (Math.min(Math.max(percent, 0), 100) / 100) * c;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    <circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="${COLORS.line}" stroke-width="${stroke}" />
+    <circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}"
+      stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${offset}"
+      transform="rotate(-90 ${size / 2} ${size / 2})" style="transition: stroke-dashoffset .6s ease" />
+    ${showLabel ? `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${COLORS.text}" font-size="${size * 0.2}" font-family="Georgia, serif">${Math.round(percent)}%</text>` : ""}
+  </svg>`;
+}
+function sparklineSVG(days, color, threshold = 80, width = 280, height = 60) {
+  const window = days.slice(-14);
+  const max = 100, min = 30;
+  const stepX = width / (window.length - 1);
+  const toY = (v) => height - ((v - min) / (max - min)) * height;
+  const points = window.map((d, i) => `${i * stepX},${toY(d.composite)}`).join(" ");
+  const thresholdY = toY(threshold);
+  const dots = window.map((d, i) =>
+    `<circle cx="${i * stepX}" cy="${toY(d.composite)}" r="${d.composite < threshold ? 3 : 2}" fill="${d.composite < threshold ? COLORS.warn : color}" />`
+  ).join("");
+  return `<svg width="${width}" height="${height}" style="overflow:visible">
+    <line x1="0" y1="${thresholdY}" x2="${width}" y2="${thresholdY}" stroke="${COLORS.line}" stroke-width="1" stroke-dasharray="4 4" />
+    <polyline points="${points}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+    ${dots}
+  </svg>`;
+}
+
+// ============================================================
+// APP STATE + RENDER
+// ============================================================
+const el = (sel) => document.querySelector(sel);
+const root = document.getElementById("root");
+
+const state = {
+  screen: "welcome", step: 0, answers: [], track: null,
+  trendMode: 0, prevStreak: 0, todayLog: undefined,
+  citation: null, citationFetchedForLever: null,
+  habitLabel: null, habitTrigger: null, sleepTarget: 8,
+  habitDraft: "", habitTriggerDraft: "", sleepTargetDraft: 8, showIdeas: false,
+  todayValues: {}, expandedMoment: null, saving: false,
+};
+
+function resetApp() {
+  Object.assign(state, {
+    screen: "welcome", step: 0, answers: [], track: null,
+    trendMode: 0, prevStreak: 0, todayLog: undefined,
+    citation: null, citationFetchedForLever: null,
+    habitLabel: null, habitTrigger: null, sleepTarget: 8,
+    habitDraft: "", habitTriggerDraft: "", sleepTargetDraft: 8, showIdeas: false,
+    todayValues: {}, expandedMoment: null, saving: false,
+  });
+  render();
+}
+
+function render() {
+  let html = "";
+  if (state.screen === "welcome") html = renderWelcome();
+  else if (state.screen === "quiz") html = renderQuiz();
+  else if (state.screen === "results") html = renderResults();
+  else if (state.screen === "define") html = renderDefine();
+  else if (state.screen === "dashboard") html = renderDashboard();
+  else if (state.screen === "today") html = renderToday();
+
+  root.innerHTML = `
+    <div class="frame">${html}</div>
+    ${state.screen !== "welcome" ? '<div class="center"><button class="reset-link" id="resetLink">restart prototype</button></div>' : ""}
+  `;
+  bindEvents();
+}
+
+function bindEvents() {
+  el("#resetLink")?.addEventListener("click", resetApp);
+
+  if (state.screen === "welcome") {
+    el("#startBtn")?.addEventListener("click", () => { state.screen = "quiz"; state.step = 0; render(); });
+  }
+
+  if (state.screen === "quiz") {
+    const q = activeQuestions(state.answers)[state.step];
+    root.querySelectorAll(".option-btn").forEach((btn) => {
+      btn.addEventListener("click", () => handleAnswer(q.options[+btn.dataset.idx]));
+    });
+  }
+
+  if (state.screen === "results") {
+    el("#continueBtn")?.addEventListener("click", () => {
+      state.screen = "define";
+      state.habitDraft = "";
+      state.habitTriggerDraft = "";
+      state.sleepTargetDraft = 8;
+      state.showIdeas = false;
+      render();
+    });
+  }
+
+  if (state.screen === "define") {
+    const habitInput = el("#habitInput");
+    const triggerInput = el("#triggerInput");
+    habitInput?.addEventListener("input", (e) => { state.habitDraft = e.target.value; });
+    triggerInput?.addEventListener("input", (e) => { state.habitTriggerDraft = e.target.value; });
+    el("#ideaToggleBtn")?.addEventListener("click", () => { state.showIdeas = !state.showIdeas; render(); });
+    root.querySelectorAll("[data-idea-chip]").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        state.habitDraft = chip.dataset.ideaChip;
+        render();
+        el("#habitInput")?.focus();
+      });
+    });
+    root.querySelectorAll("[data-sleep-target-stepper]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const dir = +btn.dataset.dir;
+        const next = Math.min(11, Math.max(5, +(state.sleepTargetDraft + dir * 0.5).toFixed(1)));
+        state.sleepTargetDraft = next;
+        render();
+      });
+    });
+    el("#defineContinueBtn")?.addEventListener("click", async () => {
+      if (state.track === "energy") {
+        const score = scoreAnswers(state.answers);
+        await saveTrackAssignment(state.track, score, { sleepTarget: state.sleepTargetDraft });
+        state.sleepTarget = state.sleepTargetDraft;
+        enterDashboard();
+        return;
+      }
+      const label = (state.habitDraft || "").trim();
+      if (!label) { if (habitInput) habitInput.style.borderColor = COLORS.warn; return; }
+      const trigger = (state.habitTriggerDraft || "").trim();
+      const score = scoreAnswers(state.answers);
+      await saveTrackAssignment(state.track, score, { label, trigger });
+      state.habitLabel = label;
+      state.habitTrigger = trigger || null;
+      enterDashboard();
+    });
+  }
+
+  if (state.screen === "dashboard") {
+    el("#checkinBtn")?.addEventListener("click", enterToday);
+    el("#simDip")?.addEventListener("click", () => setTrendMode(-1));
+    el("#simSteady")?.addEventListener("click", () => setTrendMode(0));
+    el("#simRise")?.addEventListener("click", () => setTrendMode(1));
+    el("#requizBtn")?.addEventListener("click", resetApp);
+    el("#retakeBtn")?.addEventListener("click", resetApp);
+  }
+
+  if (state.screen === "today") {
+    root.querySelectorAll("[data-today-stepper]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = btn.dataset.todayStepper;
+        const dir = +btn.dataset.dir, step = +btn.dataset.step, min = +btn.dataset.min, max = +btn.dataset.max;
+        const next = Math.min(max, Math.max(min, +(state.todayValues[key] + dir * step).toFixed(2)));
+        state.todayValues[key] = next;
+        render();
+      });
+    });
+    root.querySelectorAll("[data-today-toggle]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        state.todayValues[btn.dataset.todayToggle] = btn.dataset.value === "true";
+        render();
+      });
+    });
+    root.querySelectorAll("[data-edit-moment]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = btn.dataset.editMoment;
+        state.todayValues[key] = state.todayLog?.levers?.[key] ?? state.todayValues[key];
+        state.expandedMoment = key;
+        render();
+      });
+    });
+    root.querySelectorAll("[data-save-moment]").forEach((btn) => {
+      btn.addEventListener("click", () => handleSaveMoment(btn.dataset.saveMoment));
+    });
+    el("#backToDashboardBtn")?.addEventListener("click", () => { state.screen = "dashboard"; render(); });
+  }
+}
+
+// ---- Quiz flow ----
+function handleAnswer(opt) {
+  const next = [...state.answers, opt];
+  state.answers = next;
+
+  const needsTiebreaker = next.length === 6 && (() => {
+    const s = scoreAnswers(next);
+    const { top, second } = topTwo(s);
+    return top[1] - second[1] === 0;
+  })();
+
+  if (next.length === 6 && needsTiebreaker) { state.step += 1; render(); return; }
+  if ((next.length === 6 && !needsTiebreaker) || next.length === 7) {
+    const finalScore = scoreAnswers(next);
+    const { top } = topTwo(finalScore);
+    state.track = top[0];
+    state.screen = "results";
+    render();
+    return;
+  }
+  state.step += 1;
+  render();
+}
+
+// ---- Dashboard lifecycle ----
+function enterDashboard() {
+  state.screen = "dashboard";
+  state.trendMode = 0;
+  state.todayLog = undefined;
+  state.citation = null;
+  state.citationFetchedForLever = null;
+  render();
+  refreshDashboardData();
+  if ((state.track === "consistency" || state.track === "presence") && !state.habitLabel) {
+    fetchCurrentAssignment(state.track).then((a) => {
+      if (a?.habit_label) {
+        state.habitLabel = a.habit_label;
+        state.habitTrigger = a.habit_trigger || null;
+        render();
+      }
+    });
+  }
+  if (state.track === "energy") {
+    fetchCurrentAssignment(state.track).then((a) => {
+      if (a?.sleep_target_hours) {
+        state.sleepTarget = Number(a.sleep_target_hours);
+        render();
+      }
+    });
+  }
+}
+function setTrendMode(v) {
+  state.trendMode = v;
+  state.citation = null;
+  state.citationFetchedForLever = null;
+  render();
+  refreshDashboardData();
+}
+function currentDays() {
+  return Array.from({ length: 14 }, (_, i) => makeDay(state.track, i, state.trendMode));
+}
+function refreshDashboardData() {
+  const days = currentDays();
+  persistDailyLogs(state.track, days);
+  fetchTodayLog(state.track).then((log) => { state.todayLog = log; render(); });
+
+  const rolling = rollingAverage(days);
+  if (rolling < 80) {
+    const weakestLever = findWeakestLever(state.track, days);
+    if (state.citationFetchedForLever !== weakestLever) {
+      state.citation = getCitation(state.track, weakestLever);
+      state.citationFetchedForLever = weakestLever;
+      fetchCitation(state.track, weakestLever).then((live) => {
+        if (live) { state.citation = live; render(); }
+      });
+    }
+  }
+}
+
+// ---- "Today" moments lifecycle: several small check-ins through
+// the day instead of one end-of-day form ----
+function defaultTodayValues(track) {
+  if (track === "energy") return { sleep_hours: 7, moved: false, energy_score: 3 };
+  if (track === "consistency") return { completed: false };
+  return { distraction_count: 5, presence_score: 3 };
+}
+function enterToday() {
+  state.screen = "today";
+  state.expandedMoment = null;
+  state.todayValues = defaultTodayValues(state.track);
+  render();
+  fetchTodayLog(state.track).then((log) => {
+    state.todayLog = log;
+    if (log?.levers) state.todayValues = { ...state.todayValues, ...log.levers };
+    render();
+  });
+  if (state.track === "consistency") {
+    fetchLatestLog(state.track).then((latest) => { state.prevStreak = latest?.levers?.streak ?? 0; });
+  }
+}
+async function handleSaveMoment(key) {
+  const track = state.track;
+  let values = { [key]: state.todayValues[key] };
+  if (track === "consistency" && key === "completed") {
+    const streak = state.todayValues.completed ? state.prevStreak + 1 : 0;
+    values = { completed: state.todayValues.completed, streak };
+  }
+  const result = await saveMoment(track, key, values);
+  if (result) {
+    state.todayLog = { ...state.todayLog, ...result };
+  }
+  state.expandedMoment = null;
+  render();
+}
+
+// ============================================================
+// SCREEN TEMPLATES
+// ============================================================
+function renderWelcome() {
+  return `
+    <div class="center">
+      <div class="eyebrow">ONBOARDING · 6 QUESTIONS</div>
+      <h1 class="h1">Built for the way<br/>you work.</h1>
+      <p class="lede">A few honest questions about where things actually break down for you — then we'll match you to the system built for that.</p>
+      <button class="primary-btn" id="startBtn">Begin →</button>
+    </div>`;
+}
+
+function renderQuiz() {
+  const qs = activeQuestions(state.answers);
+  const question = qs[state.step];
+  const total = qs.length;
+  const stepNum = state.step + 1;
+  const dots = Array.from({ length: total }).map((_, i) =>
+    `<div class="progress-dot ${i < stepNum ? "on" : ""}"></div>`
+  ).join("");
+  const options = question.options.map((opt, i) =>
+    `<button class="option-btn" data-idx="${i}">${opt.label}</button>`
+  ).join("");
+  return `
+    <div class="center">
+      <div class="progress-row">${dots}</div>
+      <div class="eyebrow">QUESTION ${stepNum} OF ${total}</div>
+      <h2 class="h2">${question.prompt}</h2>
+      <p class="why">${question.why}</p>
+      <div class="option-list">${options}</div>
+    </div>`;
+}
+
+function renderResults() {
+  const track = state.track;
+  const t = TRACKS[track];
+  const score = scoreAnswers(state.answers);
+  const sorted = Object.entries(score).sort((a, b) => b[1] - a[1]);
+  const maxScore = sorted[0][1] || 1;
+  const arcs = sorted.map(([key, val]) => `
+    <div style="text-align:center">
+      ${arcSVG((val / maxScore) * 100, TRACKS[key].color, 88, 7)}
+      <div style="margin-top:8px;font-size:13px;color:${COLORS.muted};letter-spacing:.5px">${TRACKS[key].name.toUpperCase()}</div>
+    </div>`).join("");
+  return `
+    <div class="center">
+      <div class="eyebrow" style="color:${t.color}">YOUR STARTING TRACK</div>
+      <h1 class="h1" style="color:${t.color}">${t.name}</h1>
+      <p class="lede">${t.tagline}</p>
+      <div style="display:flex;gap:24px;margin:32px 0;flex-wrap:wrap;justify-content:center">${arcs}</div>
+      <div class="panel" style="border-color:${t.color}55">
+        <div style="font-size:13px;color:${COLORS.muted};margin-bottom:6px">DAILY CHECK-IN</div>
+        <div style="font-size:15px">${t.checkin}</div>
+      </div>
+      <button class="primary-btn" style="background:${t.color};margin-top:32px" id="continueBtn">Start my ${t.name} track →</button>
+    </div>`;
+}
+
+function renderDefine() {
+  const track = state.track;
+  const t = TRACKS[track];
+
+  if (track === "energy") {
+    return `
+      <div class="center">
+        <div class="eyebrow" style="color:${t.color}">ONE LAST THING</div>
+        <h2 class="h2">What's a good night's sleep for you?</h2>
+        <p class="lede">Some people run well on 6.5 hours, others need 9. Your sleep score is measured against your own target, not a generic one.</p>
+        <div class="panel" style="margin-top:20px">
+          <div class="stepper-row">
+            <div style="font-size:14px">Sleep target</div>
+            <div style="display:flex;align-items:center;gap:14px">
+              <button class="stepper-btn" data-sleep-target-stepper data-dir="-1">−</button>
+              <div style="min-width:56px;text-align:center;font-size:15px;color:${t.color}">${state.sleepTargetDraft}h</div>
+              <button class="stepper-btn" data-sleep-target-stepper data-dir="1">+</button>
+            </div>
+          </div>
+        </div>
+        <button class="primary-btn" style="background:${t.color};margin-top:26px" id="defineContinueBtn">Continue →</button>
+      </div>`;
+  }
+
+  const prompt = track === "consistency" ? "What's the one habit you're building?" : "What's your grounding practice?";
+  const placeholder = track === "consistency"
+    ? "e.g. flossing, no phone after 9pm, 10 pages of reading"
+    : "e.g. one slow breath before meetings, a phone-free walk";
+  const inputStyle = `width:100%;background:${COLORS.panel};border:1px solid ${COLORS.line};border-radius:10px;color:${COLORS.text};font-family:var(--sans);font-size:15px;padding:14px 16px;`;
+  const fieldLabelStyle = `font-size:11px;letter-spacing:1px;text-transform:uppercase;color:${COLORS.muted};margin:18px 0 6px;text-align:left;`;
+
+  const examples = EXAMPLE_PRACTICES[track] || [];
+  const ideaHint = track === "presence"
+    ? "A good grounding practice is short (under a minute), doesn't need anything special, and you can actually remember to do it."
+    : "A good habit is small enough that skipping it feels harder to justify than doing it.";
+  const chipsHTML = state.showIdeas
+    ? `<div class="chip-group">${examples.map((ex) => `<button class="chip" data-idea-chip="${ex.replace(/"/g, "&quot;")}">${ex}</button>`).join("")}</div>`
+    : "";
+
+  return `
+    <div class="center">
+      <div class="eyebrow" style="color:${t.color}">ONE LAST THING</div>
+      <h2 class="h2">${prompt}</h2>
+      <p class="lede">This shows up in your daily check-ins so they're specific to you, not generic.</p>
+      <input id="habitInput" type="text" placeholder="${placeholder}" value="${state.habitDraft || ""}" style="${inputStyle}margin-top:20px" />
+      <button class="idea-toggle" id="ideaToggleBtn">${state.showIdeas ? "Hide ideas" : "Not sure? Need an idea →"}</button>
+      ${state.showIdeas ? `<p class="lede" style="font-size:12.5px;margin:8px 0 0;text-align:left">${ideaHint}</p>` : ""}
+      ${chipsHTML}
+
+      <div style="width:100%">
+        <div style="${fieldLabelStyle}">Attach it to something (optional)</div>
+        <input id="triggerInput" type="text" placeholder="e.g. right after my morning coffee" value="${state.habitTriggerDraft || ""}" style="${inputStyle}" />
+        <p class="lede" style="font-size:12.5px;margin:6px 0 0;text-align:left">Habits stick better tied to something you already do daily than to willpower alone.</p>
+      </div>
+
+      <button class="primary-btn" style="background:${t.color};margin-top:26px" id="defineContinueBtn">Continue →</button>
+    </div>`;
+}
+
+function renderDashboard() {
+  const track = state.track;
+  const t = TRACKS[track];
+  const days = currentDays();
+  const rolling = rollingAverage(days);
+  const graduated = rolling >= 80;
+  const dipping = rolling < 80;
+  const weakestLever = dipping ? findWeakestLever(track, days) : null;
+  const leverLabel = weakestLever ? t.leverLabels[weakestLever] : null;
+
+  const doneKeys = state.todayLog?.moment_timestamps ? Object.keys(state.todayLog.moment_timestamps) : [];
+  const totalMoments = t.moments.length;
+  const doneCount = doneKeys.filter((k) => t.moments.some((m) => m.key === k)).length;
+  const checkinBtnLabel = state.todayLog === undefined ? "…"
+    : doneCount === 0 ? "Log today's first moment →"
+    : doneCount < totalMoments ? `Continue today (${doneCount}/${totalMoments}) →`
+    : "All logged today ✓ — review";
+  const habitNote = state.habitLabel
+    ? `<div class="panel" style="margin:14px 0;text-align:left"><div style="font-size:11px;color:${COLORS.muted};letter-spacing:1px;margin-bottom:4px">WHAT YOU'RE BUILDING</div><div style="font-size:14px">${state.habitLabel}</div></div>`
+    : track === "energy"
+    ? `<div class="panel" style="margin:14px 0;text-align:left"><div style="font-size:11px;color:${COLORS.muted};letter-spacing:1px;margin-bottom:4px">YOUR SLEEP TARGET</div><div style="font-size:14px">${state.sleepTarget}h a night</div></div>`
+    : "";
+
+  return `
+    <div class="center">
+      <div class="eyebrow" style="color:${t.color}">${t.name.toUpperCase()} · DAY 14 · 7-DAY ROLLING AVERAGE</div>
+      ${arcSVG(rolling, t.color, 150, 12)}
+      <div style="margin-top:10px;font-size:14px;color:${COLORS.muted}">${t.metricLabel}</div>
+      <div style="margin-top:24px">${sparklineSVG(days, t.color, 80)}</div>
+      <div style="font-size:12px;color:${COLORS.muted};margin-top:6px">last 14 days · dashed line marks the 80% steady-state threshold</div>
+
+      ${habitNote}
+
+      <button class="primary-btn" style="background:${t.color};margin-top:8px;opacity:${state.todayLog === undefined ? 0.6 : 1}" id="checkinBtn" ${state.todayLog === undefined ? "disabled" : ""}>${checkinBtnLabel}</button>
+
+      <div style="font-size:11px;color:${COLORS.muted};margin-top:26px;letter-spacing:1px">DEMO · PREVIEW TREND BEHAVIOR</div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="small-btn" id="simDip">simulate: dipping</button>
+        <button class="small-btn" id="simSteady">simulate: steady</button>
+        <button class="small-btn" id="simRise">simulate: rising</button>
+      </div>
+      <div style="margin-top:22px"></div>
+
+      ${graduated ? `
+        <div class="panel" style="border-color:${t.color};text-align:center">
+          <div style="font-size:15px;margin-bottom:4px">Holding at <strong style="color:${t.color}">${rolling}%</strong> — you're in steady state.</div>
+          <div style="font-size:13px;color:${COLORS.muted};margin-bottom:14px">That's the goal. Quiet win, no action needed today.</div>
+          <button class="primary-btn" style="background:${t.color}" id="requizBtn">See where I could grow next →</button>
+        </div>` : ""}
+
+      ${dipping && state.citation ? `
+        <div class="panel" style="border-color:${COLORS.warn}66;text-align:left">
+          <div style="font-size:12px;color:${COLORS.warn};letter-spacing:1px;margin-bottom:8px">YOUR ${leverLabel.toUpperCase()} IS DRAGGING THIS WEEK'S ${rolling}%</div>
+          <div style="font-size:14px;line-height:1.6;margin-bottom:14px">${state.citation}</div>
+          <button class="ghost-btn" id="retakeBtn">Retake the quiz now</button>
+        </div>` : ""}
+    </div>`;
+}
+
+function stepperMomentHTML(key, value, min, max, step, color) {
+  return `
+    <div class="stepper-row">
+      <div style="font-size:13px;color:${COLORS.muted}">Value</div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <button class="stepper-btn" data-today-stepper="${key}" data-dir="-1" data-step="${step}" data-min="${min}" data-max="${max}">−</button>
+        <div style="min-width:42px;text-align:center;font-size:15px;color:${color}">${value}</div>
+        <button class="stepper-btn" data-today-stepper="${key}" data-dir="1" data-step="${step}" data-min="${min}" data-max="${max}">+</button>
+      </div>
+    </div>`;
+}
+function toggleMomentHTML(key, value, color) {
+  return `
+    <div style="display:flex;gap:8px">
+      <button class="toggle-btn" data-today-toggle="${key}" data-value="true" style="${value ? `border-color:${color};color:${color}` : ""}">Yes</button>
+      <button class="toggle-btn" data-today-toggle="${key}" data-value="false" style="${!value ? `border-color:${color};color:${color}` : ""}">No</button>
+    </div>`;
+}
+
+function renderToday() {
+  const track = state.track;
+  const t = TRACKS[track];
+
+  if (state.todayLog === undefined) {
+    return `
+      <div class="center">
+        <div class="eyebrow" style="color:${t.color}">${t.name.toUpperCase()} · TODAY</div>
+        <p class="lede">Loading…</p>
+      </div>`;
+  }
+
+  const doneTimestamps = state.todayLog?.moment_timestamps || {};
+  const savedLevers = state.todayLog?.levers || {};
+
+  const cards = t.moments.map((m) => {
+    const isDone = !!doneTimestamps[m.key];
+    const isEditing = state.expandedMoment === m.key || !isDone;
+    const label = momentLabel(track, m, state.habitLabel);
+    let valueSummary = "";
+    if (isDone && !isEditing) {
+      const v = savedLevers[m.key];
+      valueSummary = m.type === "toggle" ? (v ? "Yes" : "No") : `${v}`;
+    }
+
+    // Personal guidance (trigger, sleep target) takes priority over
+    // the generic tip on the personalized moment.
+    let guidanceLine = m.guidance || "";
+    if (m.key === "completed" && state.habitTrigger) {
+      guidanceLine = `Attached to: ${state.habitTrigger}`;
+    }
+    if (m.key === "sleep_hours") {
+      guidanceLine = `Your target: ${state.sleepTarget}h — ${m.guidance}`;
+    }
+    const guidanceHTML = guidanceLine
+      ? `<div style="font-size:12px;color:${COLORS.muted};line-height:1.5;margin-top:6px">${guidanceLine}</div>` : "";
+
+    let body = "";
+    if (isEditing) {
+      const currentVal = state.todayValues[m.key];
+      body = m.type === "stepper"
+        ? stepperMomentHTML(m.key, currentVal, m.min, m.max, m.step, t.color)
+        : toggleMomentHTML(m.key, currentVal, t.color);
+      body += `<div style="margin-top:10px"><button class="ghost-btn" data-save-moment="${m.key}" style="border-color:${t.color};color:${t.color}">${isDone ? "Update" : "Log this"}</button></div>`;
+    }
+    const habitRefHTML = m.showsHabit && state.habitLabel
+      ? `<div style="font-size:13px;color:${t.color};margin-top:2px">→ ${state.habitLabel}</div>` : "";
+    return `
+      <div class="moment-card ${isDone ? "done" : ""}">
+        <div class="moment-head">
+          <div>
+            <div class="moment-time">${m.time}</div>
+            <div class="moment-label">${label}</div>
+            ${habitRefHTML}
+            ${guidanceHTML}
+            ${isDone && !isEditing ? `<div class="moment-value">Logged · ${valueSummary}</div>` : ""}
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            ${isDone && !isEditing ? `<button class="ghost-btn" data-edit-moment="${m.key}" style="padding:4px 10px;font-size:11px">Edit</button>` : ""}
+            <div class="moment-check">${isDone ? "✓" : ""}</div>
+          </div>
+        </div>
+        ${isEditing ? `<div class="moment-body">${body}</div>` : ""}
+      </div>`;
+  }).join("");
+
+  return `
+    <div class="center">
+      <div class="eyebrow" style="color:${t.color}">${t.name.toUpperCase()} · TODAY</div>
+      <h2 class="h2">Small wins, whenever they happen.</h2>
+      <p class="lede">Log each one as it happens through the day — no need to wait until tonight.</p>
+      <div class="moment-list" style="margin-top:16px">${cards}</div>
+      <button class="ghost-btn" style="margin-top:20px" id="backToDashboardBtn">Back to dashboard</button>
+    </div>`;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+ensureSession();
+render();
+</script>
+</body>
+</html>
