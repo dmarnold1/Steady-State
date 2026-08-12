@@ -103,7 +103,7 @@
 
   .card-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
   .trigger{ font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--marigold-deep); margin-bottom: 6px; font-weight:700; }
-  .trigger::before{ content: 'TRIGGER: '; color: var(--ink-soft); font-weight:400; }
+  .trigger::before{ content: 'Happens after: '; color: var(--ink-soft); font-weight:400; }
   .aname{ font-family: var(--display); font-weight:600; font-size: 19px; margin: 0 0 4px; color: var(--ink); }
   .purpose{ font-size: 13px; line-height:1.55; color: var(--ink-soft); margin: 0 0 14px; }
 
@@ -178,7 +178,7 @@
   .choice-card p{ font-size:13px; line-height:1.55; color:var(--ink-soft); margin:0 0 16px; }
   .choice-card.highlight{ border-color: var(--marigold); box-shadow: 0 8px 28px rgba(224,120,86,0.15); background: linear-gradient(165deg, #FFF8EC, var(--surface) 55%); position:relative; }
   .choice-card.highlight .eyebrow{ color: var(--marigold-deep); }
-  .choice-card.highlight::before{ content:'RECOMMENDED'; position:absolute; top:-9px; right:16px; background: linear-gradient(135deg, var(--marigold), var(--coral)); color:#FFFDF8; font-family:var(--mono); font-size:8.5px; letter-spacing:0.08em; padding:4px 9px; border-radius:999px; font-weight:700; }
+  .choice-card.highlight::before{ content:'GOOD PLACE TO START'; position:absolute; top:-9px; right:16px; background: linear-gradient(135deg, var(--marigold), var(--coral)); color:#FFFDF8; font-family:var(--mono); font-size:8.5px; letter-spacing:0.08em; padding:4px 9px; border-radius:999px; font-weight:700; }
 
   .switch-link{ background:none; border:none; color: var(--ink-soft); font-family: var(--mono); font-size: 10px; letter-spacing:0.05em; text-transform:uppercase; text-decoration: underline; text-underline-offset:3px; cursor:pointer; padding:0; }
   .switch-link:hover{ color: var(--marigold-deep); }
@@ -195,6 +195,11 @@
   .build-q textarea{ width:100%; background: var(--cream); border: 1px solid var(--line); border-radius: 8px; color: var(--ink); font-family: var(--body); font-size: 13px; padding: 10px; resize: vertical; }
   .build-q textarea:focus{ outline:none; border-color: var(--marigold-deep); }
   .build-intro b{ color: var(--marigold-deep); font-weight:600; }
+  .idea-toggle{ background:none; border:none; padding:0; margin-bottom:8px; font-family: var(--body); font-size: 12px; color: var(--marigold-deep); text-decoration: underline; text-underline-offset:3px; cursor:pointer; display:block; }
+  .idea-toggle:hover{ color: var(--coral); }
+  .example-chips{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+  .chip{ font-family: var(--body); font-size: 12px; color: var(--marigold-deep); background: #FFF3DD; border: 1px solid #EBD19B; border-radius: 999px; padding: 5px 11px; cursor:pointer; transition: all 150ms ease; }
+  .chip:hover{ background: var(--marigold); color: #FFFDF8; border-color: var(--marigold); }
   .build-actions{ display:flex; justify-content:space-between; align-items:center; margin-top: 8px; gap:10px; }
   .build-error{ font-size: 12px; color: var(--rose); margin-top: -8px; margin-bottom: 14px; display:none; }
   .build-error.show{ display:block; }
@@ -318,24 +323,48 @@
         <div class="qnum"><svg class="qnum-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Step 1: Morning</div>
         <label>What's the first thing you do every morning, no matter what?</label>
         <div class="hint">Something so automatic you don't even think about it.</div>
+        <button type="button" class="idea-toggle" data-target="q1-ideas">Need an idea?</button>
+        <div class="example-chips" id="q1-ideas" data-target="q1" style="display:none">
+          <button type="button" class="chip">First sip of coffee</button>
+          <button type="button" class="chip">Turning off your alarm</button>
+          <button type="button" class="chip">Brushing my teeth</button>
+        </div>
         <textarea id="q1" rows="2" placeholder="Type your answer here"></textarea>
       </div>
       <div class="build-q">
         <div class="qnum"><svg class="qnum-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2 -4 4 -4 6 0s4 4 6 0s4 -4 6 0"/><path d="M2 17c2 -4 4 -4 6 0s4 4 6 0s4 -4 6 0" opacity="0.5"/></svg>Step 2: Movement</div>
         <label>When does your body already move during the day?</label>
         <div class="hint">Any point where you're physically up and moving, not necessarily exercise.</div>
+        <button type="button" class="idea-toggle" data-target="q2-ideas">Need an idea?</button>
+        <div class="example-chips" id="q2-ideas" data-target="q2" style="display:none">
+          <button type="button" class="chip">Getting out of bed</button>
+          <button type="button" class="chip">After a workout</button>
+          <button type="button" class="chip">Stretching after sitting a while</button>
+        </div>
         <textarea id="q2" rows="2" placeholder="Type your answer here"></textarea>
       </div>
       <div class="build-q">
         <div class="qnum"><svg class="qnum-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="6.2" opacity="0.6"/><circle cx="12" cy="12" r="9.6" opacity="0.3"/></svg>Step 3: Focus</div>
         <label>Where in your day could 20 to 30 minutes go toward something worth learning or reading?</label>
         <div class="hint"><b>That's it, only 20 to 30 minutes.</b> Pick a time that could realistically work, even if you're not doing it yet.</div>
+        <button type="button" class="idea-toggle" data-target="q3-ideas">Need an idea?</button>
+        <div class="example-chips" id="q3-ideas" data-target="q3" style="display:none">
+          <button type="button" class="chip">Lunch break</button>
+          <button type="button" class="chip">Right after work</button>
+          <button type="button" class="chip">First 20 minutes at my desk</button>
+        </div>
         <textarea id="q3" rows="2" placeholder="Type your answer here"></textarea>
       </div>
       <div class="build-q">
         <div class="qnum"><svg class="qnum-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/><circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" stroke="none"/></svg>Step 4: Evening</div>
         <label>What's the last thing you do every night before bed?</label>
         <div class="hint">Something reliable. It already happens, no matter what kind of day it was.</div>
+        <button type="button" class="idea-toggle" data-target="q4-ideas">Need an idea?</button>
+        <div class="example-chips" id="q4-ideas" data-target="q4" style="display:none">
+          <button type="button" class="chip">Making tea</button>
+          <button type="button" class="chip">Brushing my teeth</button>
+          <button type="button" class="chip">Plugging in my phone</button>
+        </div>
         <textarea id="q4" rows="2" placeholder="Type your answer here"></textarea>
       </div>
 
@@ -823,7 +852,7 @@ async function saveAnchorEdit(anchorId, draft){
 }
 
 async function deleteAnchor(anchorId){
-  if(!confirm('Remove this anchor from your system? This deletes its items and fields too.')) return;
+  if(!confirm('Remove this anchor from your system? Its checklist and notes go with it.')) return;
   await supabase.from('user_anchors').delete().eq('id', anchorId);
   state.anchors = state.anchors.filter(a => a.id !== anchorId);
   renderAnchors();
@@ -848,9 +877,9 @@ function renderEditPanel(anchor){
 
   wrap.innerHTML = `
     <div class="edit-row"><label>Anchor name</label><input type="text" data-f="name" value="${escapeHtml(anchor.name)}" /></div>
-    <div class="edit-row"><label>Trigger (what it attaches to)</label><input type="text" data-f="trigger_text" value="${escapeHtml(anchor.trigger_text||'')}" /></div>
-    <div class="edit-row"><label>Purpose</label><textarea data-f="purpose" rows="2">${escapeHtml(anchor.purpose||'')}</textarea></div>
-    <div class="edit-row"><label>Tolerance (minimum that still counts)</label><textarea data-f="tolerance" rows="2">${escapeHtml(anchor.tolerance||'')}</textarea></div>
+    <div class="edit-row"><label>What it happens after</label><input type="text" data-f="trigger_text" value="${escapeHtml(anchor.trigger_text||'')}" /></div>
+    <div class="edit-row"><label>Why it matters</label><textarea data-f="purpose" rows="2">${escapeHtml(anchor.purpose||'')}</textarea></div>
+    <div class="edit-row"><label>Minimum that still counts</label><textarea data-f="tolerance" rows="2">${escapeHtml(anchor.tolerance||'')}</textarea></div>
     <div class="edit-section-title">Checklist items</div>
     <div class="edit-items"></div>
     <button type="button" class="btn small edit-add" data-add="item">+ Add item</button>
@@ -1035,7 +1064,7 @@ function renderAnchors(){
     if(anchor.tolerance){
       const tol = document.createElement('div');
       tol.className = 'tolerance';
-      tol.innerHTML = `<b>Tolerance:</b> ${escapeHtml(anchor.tolerance)}`;
+      tol.innerHTML = `<b>Still counts if:</b> ${escapeHtml(anchor.tolerance)}`;
       card.appendChild(tol);
     }
     if(anchor.signal_text){
@@ -1169,6 +1198,23 @@ async function init(){
   el('#enterBuildBtn').addEventListener('click', showBuildView);
   el('#buildCancelBtn').addEventListener('click', hideBuildView);
   el('#buildSubmitBtn').addEventListener('click', submitBuildForm);
+  document.querySelectorAll('.idea-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = el('#' + btn.dataset.target);
+      const showing = target.style.display !== 'none';
+      target.style.display = showing ? 'none' : 'flex';
+      btn.textContent = showing ? 'Need an idea?' : 'Hide ideas';
+    });
+  });
+  document.querySelectorAll('.example-chips').forEach(group => {
+    const targetId = group.dataset.target;
+    group.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        el('#' + targetId).value = chip.textContent;
+        el('#' + targetId).focus();
+      });
+    });
+  });
   el('#viewHistoryBtn').addEventListener('click', async () => {
     setView('history');
     el('#historyList').innerHTML = '<div class="history-empty">Loading…</div>';
