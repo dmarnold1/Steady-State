@@ -1,4 +1,4 @@
-const CACHE_NAME = 'steady-state-v1';
+const CACHE_NAME = 'steady-state-tracks-v1';
 const APP_SHELL = ['./index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (event) => {
@@ -19,7 +19,7 @@ self.addEventListener('activate', (event) => {
 // falling back to the cached app shell when offline.
 self.addEventListener('fetch', (event) => {
   const req = event.request;
-  if(req.method !== 'GET') return;
+  if (req.method !== 'GET') return;
 
   event.respondWith(
     fetch(req)

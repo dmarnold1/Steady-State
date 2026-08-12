@@ -3,1251 +3,1068 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-<title>Steady State Living</title>
+<title>Steady State — Tracks</title>
 <link rel="manifest" href="manifest.json" />
-<meta name="theme-color" content="#E2A23A" />
+<meta name="theme-color" content="#0B0D12" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Steady State" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 <link rel="icon" href="icon-192.png" type="image/png" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root{
-    --cream: #FBF7EE; --paper2: #F2EAD6; --surface: #FFFFFF;
-    --ink: #26362C; --ink-soft: #6B7D6F; --line: #DDD2B4;
-    --marigold: #E2A23A; --marigold-deep: #B87A1E; --coral: #E07856; --rose: #C06B72; --sage: #7E9B80;
-    --radius: 10px;
-    --display: 'Fraunces', serif; --body: 'Inter', sans-serif; --mono: 'Space Mono', monospace; --script: 'Caveat', cursive;
+    --bg: #0B0D12; --panel: #13161D; --panel-raised: #181B24; --line: #22262F;
+    --text: #F2F0EA; --muted: #8B9F9C; --good: #6FCF97; --warn: #FF6B5B;
+    --presence: #8EA6FF; --consistency: #F2B84B; --energy: #FF6B5B;
+    --serif: 'Georgia', 'Iowan Old Style', serif;
+    --sans: 'Helvetica Neue', Arial, sans-serif;
   }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
   body{
-    background:
-      radial-gradient(1000px 560px at 12% -10%, rgba(224,120,86,0.13), transparent 58%),
-      radial-gradient(800px 560px at 105% 5%, rgba(126,155,128,0.14), transparent 55%),
-      radial-gradient(700px 500px at 50% 115%, rgba(226,162,58,0.10), transparent 55%),
-      radial-gradient(500px 400px at 85% 60%, rgba(192,107,114,0.06), transparent 60%),
-      var(--cream);
-    background-attachment: fixed;
-    color: var(--ink); font-family: var(--body); min-height: 100vh; -webkit-font-smoothing: antialiased;
+    background: var(--bg); color: var(--text); min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    font-family: var(--serif); padding: 24px 16px;
   }
-  @media (prefers-reduced-motion: reduce){ *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; } }
-  .wrap{ max-width: 640px; margin: 0 auto; padding: 28px 20px 80px; }
-
-  .banner{
-    background: #FBEADC; border: 1px solid var(--coral); color: var(--ink);
-    border-radius: var(--radius); padding: 14px 16px; font-size: 13px; line-height:1.5; margin-bottom: 20px;
+  button{ font-family: inherit; cursor:pointer; }
+  .frame{ width:100%; max-width:480px; }
+  .center{ display:flex; flex-direction:column; align-items:center; text-align:center; }
+  .eyebrow{ font-size:12px; letter-spacing:2px; font-family: var(--sans); margin-bottom:14px; color: var(--muted); }
+  .h1{ font-size:38px; line-height:1.15; font-weight:400; margin:0 0 16px; }
+  .h2{ font-size:24px; line-height:1.3; font-weight:400; margin:0 0 8px; max-width:380px; }
+  .lede{ font-size:16px; line-height:1.6; color: var(--muted); font-family: var(--sans); max-width:360px; margin:0 0 8px; }
+  .why{ font-size:13px; color: var(--muted); font-family: var(--sans); margin-bottom:28px; }
+  .option-list{ display:flex; flex-direction:column; gap:10px; width:100%; }
+  .option-btn{
+    background: var(--panel); border:1px solid var(--line); border-radius:10px; color: var(--text);
+    padding:16px 18px; font-size:15px; font-family: var(--sans); text-align:left; transition: border-color .2s ease; width:100%;
   }
-  .banner b{ color: var(--marigold-deep); }
-  .banner code{ background: rgba(38,54,44,0.08); padding: 1px 5px; border-radius:3px; font-family: var(--mono); font-size:11.5px; }
-
-  .head{ display:flex; flex-direction:column; gap:18px; margin-bottom: 22px; }
-  .brand{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; }
-  .brand h1{ font-family: var(--display); font-optical-sizing:auto; font-weight:600; font-size: 26px; letter-spacing: -0.01em; margin:0; color: var(--ink); }
-  .brand h1 .dot{ color: var(--coral); }
-  .wordmark-tagline{ font-family: var(--display); font-style: italic; font-weight:500; font-size: 14px; color: var(--ink-soft); margin: 2px 0 0; }
-  .brand .date{ font-family: var(--mono); font-size: 11px; color: var(--ink-soft); letter-spacing: 0.06em; text-transform:uppercase; }
-  .tagline{ font-family: var(--mono); font-size: 11px; color: var(--ink-soft); letter-spacing: 0.04em; margin-top:-6px; display:flex; justify-content:space-between; align-items:center; gap:10px; }
-  .tagline span.name{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-
-  .btn{
-    font-family: var(--mono); font-size: 10px; letter-spacing:0.06em; text-transform:uppercase;
-    background: var(--surface); border: 1px solid var(--line); color: var(--ink-soft);
-    padding: 7px 11px; border-radius: 999px; cursor:pointer; transition: all 150ms ease; white-space:nowrap;
+  .option-btn:hover{ border-color: var(--text); }
+  .primary-btn{
+    background: var(--text); color: var(--bg); border:none; border-radius:30px;
+    padding:14px 30px; font-size:15px; font-family: var(--sans); font-weight:600;
   }
-  .btn:hover{ border-color: var(--marigold-deep); color: var(--marigold-deep); }
-  .btn.primary{ background: linear-gradient(135deg, var(--marigold), var(--coral)); border-color: transparent; color: #FFFDF8; font-weight:700; box-shadow: 0 3px 10px rgba(224,120,86,0.28); }
-  .btn.primary:hover{ filter: brightness(1.05); color:#FFFDF8; }
-  .btn.ghost{ border-color: transparent; background:transparent; }
-  .btn.danger{ border-color: var(--rose); color: var(--rose); }
-  .btn.danger:hover{ background: var(--rose); color: var(--surface); }
-  .btn.small{ padding: 5px 9px; font-size: 9px; }
-
-  /* Day arc — signature element */
-  .day-arc-wrap{ background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px 6px; box-shadow: 0 2px 14px rgba(38,54,44,0.05); }
-  .day-arc-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:-6px; padding: 0 4px; }
-  .day-arc-label{ font-family: var(--mono); font-size: 10px; letter-spacing:0.1em; text-transform:uppercase; color: var(--ink-soft); }
-  .day-arc-score{ font-family: var(--display); font-size: 16px; color: var(--marigold-deep); font-weight:600; }
-  .day-arc-svg{ width:100%; height:auto; display:block; }
-  .arc-track{ fill:none; stroke: var(--line); stroke-width:2; stroke-dasharray: 1 7; stroke-linecap:round; }
-  .arc-progress{ fill:none; stroke: url(#arcGrad); stroke-width:3; stroke-linecap:round; transition: stroke-dasharray 700ms cubic-bezier(.2,.9,.25,1); }
-  .arc-dot{ fill: var(--surface); stroke: var(--line); stroke-width:2; transition: all 300ms ease; }
-  .arc-dot.complete{ fill: var(--marigold); stroke: var(--marigold-deep); }
-  .arc-label{ font-family: var(--mono); font-size:9px; fill: var(--ink-soft); }
-  .arc-sun{ fill: var(--coral); stroke: #FFFDF8; stroke-width:2; filter: drop-shadow(0 0 6px rgba(224,120,86,0.55)); transition: all 700ms cubic-bezier(.2,.9,.25,1); }
-
-  .insight-card{ background: linear-gradient(165deg, #FFF8EC, var(--surface) 55%); border: 1px solid #EBD19B; border-radius: 16px; padding: 16px 18px; margin-bottom: 22px; box-shadow: 0 2px 14px rgba(38,54,44,0.05); }
-  .insight-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px; }
-  .insight-label{ font-family: var(--mono); font-size: 10px; letter-spacing:0.1em; text-transform:uppercase; color: var(--marigold-deep); font-weight:700; }
-  .insight-body{ font-size: 13.5px; line-height:1.6; color: var(--ink); }
-  .insight-body.loading{ color: var(--ink-soft); font-family: var(--mono); font-size:11px; }
-  .insight-body.muted{ color: var(--ink-soft); font-size:12.5px; }
-
-  .rail-hint{ font-size: 11.5px; line-height:1.5; color: var(--ink-soft); margin: 0 0 18px; padding: 10px 12px; background: var(--paper2); border-radius: 8px; }
-  .rail-hint b{ color: var(--ink); font-weight:600; }
-
-  .rail{ position:relative; padding-left: 30px; }
-  .rail-line{ position:absolute; left: 9px; top: 10px; bottom: 10px; width:2px; background: linear-gradient(180deg, var(--coral), var(--sage)); opacity:0.35; }
-  .anchor{ position:relative; margin-bottom: 22px; }
-  .anchor:last-child{ margin-bottom: 0; }
-  .node{ position:absolute; left: -32px; top: 18px; width: 24px; height:24px; border-radius:50%; background: var(--surface); border: 2px solid var(--line); display:flex; align-items:center; justify-content:center; font-family: var(--mono); font-size: 10px; color: var(--ink-soft); transition: all 300ms ease; }
-  .node svg{ width: 13px; height: 13px; }
-  .anchor.complete .node{ border-color: var(--marigold); color: var(--marigold-deep); background: #FFF6E6; box-shadow: 0 0 0 4px rgba(226,162,58,0.15); }
-
-  .card{ background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 18px 16px; transition: border-color 300ms ease, box-shadow 300ms ease; box-shadow: 0 1px 3px rgba(38,54,44,0.04); }
-  .anchor.complete .card{ border-color: #EBD19B; box-shadow: 0 4px 18px rgba(226,162,58,0.12); }
-
-  .card-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
-  .trigger{ font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--marigold-deep); margin-bottom: 6px; font-weight:700; }
-  .trigger::before{ content: 'Happens after: '; color: var(--ink-soft); font-weight:400; }
-  .aname{ font-family: var(--display); font-weight:600; font-size: 19px; margin: 0 0 4px; color: var(--ink); }
-  .purpose{ font-size: 13px; line-height:1.55; color: var(--ink-soft); margin: 0 0 14px; }
-
-  .research-fact{ background: linear-gradient(135deg, #FFF3DD, #FFEFE4); border: 1px solid #EBD19B; border-radius: 10px; padding: 11px 13px; font-size: 12px; line-height:1.55; color: var(--ink); margin: 0 0 14px; }
-  .research-fact b{ color: var(--marigold-deep); font-weight:700; }
-  .research-fact .rf-label{ font-family: var(--mono); font-size: 9.5px; letter-spacing:0.08em; text-transform:uppercase; color: var(--marigold-deep); font-weight:700; margin-bottom: 4px; display:flex; align-items:center; gap:5px; }
-
-  .items{ display:flex; flex-direction:column; gap:9px; margin-bottom: 10px; }
-  .item{ display:flex; align-items:flex-start; gap:10px; cursor:pointer; user-select:none; }
-  .check{ flex: 0 0 auto; width: 19px; height:19px; margin-top:1px; border-radius:6px; border: 1.5px solid var(--line); background: var(--cream); display:flex; align-items:center; justify-content:center; transition: all 150ms ease; }
-  .item.checked .check{ background: linear-gradient(135deg, var(--marigold), var(--coral)); border-color: transparent; }
-  .check svg{ width:11px; height:11px; opacity:0; transform: scale(0.6); transition: all 150ms ease; }
-  .item.checked .check svg{ opacity:1; transform: scale(1); }
-  .item-label{ font-size: 13.5px; line-height:1.45; color: var(--ink); }
-  .item.checked .item-label{ color: var(--ink-soft); text-decoration: line-through; text-decoration-color: rgba(38,54,44,0.25); }
-
-  .fields{ display:flex; flex-direction:column; gap:8px; margin-bottom: 12px; }
-  .field-label{ font-family: var(--mono); font-size: 9.5px; letter-spacing:0.06em; text-transform:uppercase; color: var(--ink-soft); margin-bottom:3px; display:block; }
-  .field input{ width:100%; background: var(--cream); border: 1px solid var(--line); border-radius: 8px; color: var(--ink); font-family: var(--body); font-size: 13px; padding: 8px 10px; }
-  .field input:focus{ outline: none; border-color: var(--marigold-deep); }
-  .field input::placeholder{ color: var(--ink-soft); opacity:0.6; }
-
-  .tolerance{ font-size: 11.5px; line-height:1.5; color: var(--ink-soft); border-top: 1px dashed var(--line); padding-top: 10px; margin-top: 4px; }
-  .tolerance b{ color: var(--ink); font-weight:600; }
-
-  .signal{ max-height:0; opacity:0; overflow:hidden; transition: all 400ms ease; font-family: var(--script); font-size: 19px; line-height:1.3; color: var(--marigold-deep); border-top: 1px dashed var(--line); }
-  .anchor.complete .signal{ max-height: 100px; opacity:1; margin-top:12px; padding-top:12px; }
-
-  /* Edit mode */
-  .edit-panel{ display:flex; flex-direction:column; gap:12px; }
-  .edit-row label{ display:block; font-family: var(--mono); font-size: 9.5px; letter-spacing:0.06em; text-transform:uppercase; color: var(--ink-soft); margin-bottom:4px; }
-  .edit-row input, .edit-row textarea{
-    width:100%; background: var(--cream); border: 1px solid var(--line); border-radius: 8px;
-    color: var(--ink); font-family: var(--body); font-size: 13px; padding: 8px 10px; resize: vertical;
+  .ghost-btn{
+    background:transparent; color: var(--text); border:1px solid var(--line); border-radius:30px;
+    padding:10px 22px; font-size:13px; font-family: var(--sans);
   }
-  .edit-row input:focus, .edit-row textarea:focus{ outline:none; border-color: var(--marigold-deep); }
-  .edit-list-row{ display:flex; gap:8px; align-items:center; }
-  .edit-list-row input{ flex:1; background: var(--cream); border: 1px solid var(--line); border-radius: 8px; color: var(--ink); font-family: var(--body); font-size: 13px; padding: 7px 10px; }
-  .edit-list-row .x{ flex:0 0 auto; width:24px; height:24px; border-radius:8px; border:1px solid var(--line); background:var(--surface); color: var(--ink-soft); cursor:pointer; font-size:14px; line-height:1; }
-  .edit-list-row .x:hover{ border-color: var(--rose); color: var(--rose); }
-  .edit-add{ align-self:flex-start; }
-  .edit-actions{ display:flex; gap:8px; justify-content:flex-end; margin-top: 4px; border-top: 1px solid var(--line); padding-top: 12px; }
-  .edit-section-title{ font-family: var(--mono); font-size: 9.5px; letter-spacing:0.06em; text-transform:uppercase; color: var(--ink-soft); margin: 4px 0 2px; }
+  .small-btn{
+    background: var(--panel); color: var(--text); border:1px solid var(--line); border-radius:20px;
+    padding:8px 14px; font-size:12px; font-family: var(--sans);
+  }
+  .panel{
+    background: var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding:18px 20px; font-family: var(--sans); width:100%;
+  }
+  .progress-row{ display:flex; gap:6px; margin-bottom:20px; }
+  .progress-dot{ width:22px; height:4px; border-radius:2px; background: var(--line); }
+  .progress-dot.on{ background: var(--text); }
+  .reset-link{
+    margin-top:28px; background:none; border:none; color: var(--muted);
+    font-size:12px; font-family: var(--sans); text-decoration:underline;
+  }
+  .stepper-row{ display:flex; align-items:center; justify-content:space-between; font-family: var(--sans); gap:16px; }
+  .stepper-btn{
+    width:30px; height:30px; border-radius:50%; background: var(--panel-raised); border:1px solid var(--line);
+    color: var(--text); font-size:16px; line-height:1; display:flex; align-items:center; justify-content:center;
+  }
+  .toggle-btn{
+    background: var(--panel-raised); border:1px solid var(--line); border-radius:20px; color: var(--muted);
+    padding:6px 16px; font-size:13px; font-family: var(--sans);
+  }
+  .idea-toggle{
+    background:none; border:none; color: var(--consistency); font-size:12.5px; font-family: var(--sans);
+    text-decoration:underline; padding:0; margin-top:10px; align-self:flex-start;
+  }
+  .chip-group{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; width:100%; }
+  .chip{
+    background: var(--panel-raised); border:1px solid var(--line); border-radius:16px; color: var(--text);
+    padding:8px 14px; font-size:12.5px; font-family: var(--sans); text-align:left; line-height:1.3;
+  }
+  .chip:hover{ border-color: var(--text); }
+  .moment-list{ display:flex; flex-direction:column; gap:12px; width:100%; text-align:left; font-family: var(--sans); }
+  .moment-card{
+    background: var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 16px;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .moment-card.done{ border-color: var(--good); background: var(--panel-raised); }
+  .moment-time{ font-size:10px; letter-spacing:1px; text-transform:uppercase; color: var(--muted); margin-bottom:4px; }
+  .moment-label{ font-size:14.5px; margin-bottom:2px; }
+  .moment-value{ font-size:12.5px; color: var(--good); }
+  .moment-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .moment-check{
+    flex:0 0 auto; width:22px; height:22px; border-radius:50%; border:1.5px solid var(--line);
+    background: var(--panel-raised); display:flex; align-items:center; justify-content:center; font-size:12px;
+  }
+  .moment-card.done .moment-check{ background: var(--good); border-color: var(--good); color: var(--bg); }
+  .moment-body{ margin-top:12px; padding-top:12px; border-top:1px dashed var(--line); }
 
-  .streak{ margin-top: 34px; }
-  .streak-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px; }
-  .streak-title{ font-family: var(--mono); font-size: 10px; letter-spacing:0.1em; text-transform:uppercase; color: var(--ink-soft); }
-  .streak-row{ display:flex; gap:6px; }
-  .streak-day{ flex:1; aspect-ratio: 1; border-radius: 6px; background: var(--surface); border: 1px solid var(--line); position:relative; }
-  .streak-day[data-level="0"]{ background: var(--surface); }
-  .streak-day[data-level="1"]{ background: #F6E4C6; border-color: #EBD19B; }
-  .streak-day[data-level="2"]{ background: #F0CD8C; border-color: var(--marigold); }
-  .streak-day[data-level="3"]{ background: var(--marigold); border-color: var(--marigold-deep); }
-  .streak-day[data-level="4"]{ background: linear-gradient(135deg, var(--marigold), var(--coral)); border-color: var(--coral); box-shadow: 0 0 6px rgba(224,120,86,0.4); }
-  .streak-foot{ display:flex; justify-content:space-between; margin-top:6px; font-family:var(--mono); font-size:9px; color:var(--ink-soft); }
-
-  .add-anchor{ margin-top: 22px; display:flex; justify-content:center; }
-
-  .btn.full{ display:block; width:100%; text-align:center; padding:12px 14px; font-size:11px; }
-
-  .explainer{ margin-bottom: 22px; }
-  .explainer h2{ font-family: var(--display); font-weight:600; font-size: 21px; margin: 0 0 10px; color: var(--ink); }
-  .explainer p{ font-size: 13.5px; line-height:1.6; color: var(--ink-soft); margin: 0 0 10px; }
-  .explainer p:last-child{ margin-bottom:0; }
-  .explainer b{ color: var(--ink); font-weight:600; }
-
-  .intro-lead{ font-size:13.5px; color:var(--ink-soft); line-height:1.6; margin: 0 0 18px; }
-  .intro-wrap{ display:flex; flex-direction:column; gap:14px; }
-  .choice-card{ border:1px solid var(--line); background:var(--surface); border-radius: 16px; padding:22px; }
-  .choice-card .eyebrow{ font-family:var(--mono); font-size:9.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:6px; }
-  .choice-card h3{ font-family:var(--display); font-weight:600; font-size:21px; margin:0 0 6px; color:var(--ink); }
-  .choice-card p{ font-size:13px; line-height:1.55; color:var(--ink-soft); margin:0 0 16px; }
-  .choice-card.highlight{ border-color: var(--marigold); box-shadow: 0 8px 28px rgba(224,120,86,0.15); background: linear-gradient(165deg, #FFF8EC, var(--surface) 55%); position:relative; }
-  .choice-card.highlight .eyebrow{ color: var(--marigold-deep); }
-  .choice-card.highlight::before{ content:'GOOD PLACE TO START'; position:absolute; top:-9px; right:16px; background: linear-gradient(135deg, var(--marigold), var(--coral)); color:#FFFDF8; font-family:var(--mono); font-size:8.5px; letter-spacing:0.08em; padding:4px 9px; border-radius:999px; font-weight:700; }
-
-  .switch-link{ background:none; border:none; color: var(--ink-soft); font-family: var(--mono); font-size: 10px; letter-spacing:0.05em; text-transform:uppercase; text-decoration: underline; text-underline-offset:3px; cursor:pointer; padding:0; }
-  .switch-link:hover{ color: var(--marigold-deep); }
-
-  .build-intro{ margin-bottom: 24px; }
-  .build-intro h2{ font-family: var(--display); font-weight:600; font-size: 22px; margin: 0 0 8px; color: var(--ink); }
-  .build-intro p{ font-size: 13px; line-height:1.6; color: var(--ink-soft); margin:0; }
-  .build-q{ background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin-bottom: 16px; }
-  .build-q .qnum{ font-family: var(--mono); font-size: 10px; letter-spacing:0.08em; color: var(--marigold-deep); margin-bottom: 6px; font-weight:700; display:flex; align-items:center; gap:6px; }
-  .qnum-icon{ width:14px; height:14px; flex:0 0 auto; }
-  .build-q label{ display:block; font-family: var(--display); font-size: 16px; font-weight:600; color: var(--ink); margin-bottom: 4px; }
-  .build-q .hint{ font-size: 12px; color: var(--ink-soft); margin-bottom: 10px; line-height:1.4; }
-  .build-q .hint b{ color: var(--marigold-deep); font-weight:600; }
-  .build-q textarea{ width:100%; background: var(--cream); border: 1px solid var(--line); border-radius: 8px; color: var(--ink); font-family: var(--body); font-size: 13px; padding: 10px; resize: vertical; }
-  .build-q textarea:focus{ outline:none; border-color: var(--marigold-deep); }
-  .build-intro b{ color: var(--marigold-deep); font-weight:600; }
-  .idea-toggle{ background:none; border:none; padding:0; margin-bottom:8px; font-family: var(--body); font-size: 12px; color: var(--marigold-deep); text-decoration: underline; text-underline-offset:3px; cursor:pointer; display:block; }
-  .idea-toggle:hover{ color: var(--coral); }
-  .example-chips{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
-  .chip{ font-family: var(--body); font-size: 12px; color: var(--marigold-deep); background: #FFF3DD; border: 1px solid #EBD19B; border-radius: 999px; padding: 5px 11px; cursor:pointer; transition: all 150ms ease; }
-  .chip:hover{ background: var(--marigold); color: #FFFDF8; border-color: var(--marigold); }
-  .build-actions{ display:flex; justify-content:space-between; align-items:center; margin-top: 8px; gap:10px; }
-  .build-error{ font-size: 12px; color: var(--rose); margin-top: -8px; margin-bottom: 14px; display:none; }
-  .build-error.show{ display:block; }
-
-  .status{ font-family: var(--mono); font-size: 11px; color: var(--ink-soft); text-align:center; padding: 40px 0; }
-
-  .history-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; }
-  .history-head h2{ font-family: var(--display); font-weight:600; font-size: 22px; margin:0; color: var(--ink); }
-  .history-list{ display:flex; flex-direction:column; gap:10px; }
-  .history-row{ background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow:hidden; }
-  .history-row-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 13px 16px; cursor:pointer; user-select:none; }
-  .history-date{ font-family: var(--display); font-weight:600; font-size: 14.5px; color: var(--ink); }
-  .history-date .dow{ font-family: var(--mono); font-size: 9.5px; color: var(--ink-soft); letter-spacing:0.06em; text-transform:uppercase; margin-right:8px; }
-  .history-score{ font-family: var(--mono); font-size: 11px; padding: 3px 9px; border-radius: 999px; background: var(--cream); color: var(--ink-soft); border: 1px solid var(--line); }
-  .history-score.high{ background: linear-gradient(135deg, var(--marigold), var(--coral)); color:#FFFDF8; border-color:transparent; }
-  .history-score.mid{ background: #F6E4C6; color: var(--marigold-deep); border-color: #EBD19B; }
-  .history-detail{ display:none; padding: 0 16px 16px; border-top: 1px solid var(--line); }
-  .history-row.open .history-detail{ display:block; }
-  .history-anchor-block{ margin-top: 12px; }
-  .history-anchor-block h4{ font-family: var(--mono); font-size: 10px; letter-spacing:0.06em; text-transform:uppercase; color: var(--marigold-deep); margin: 0 0 6px; font-weight:700; }
-  .history-item-row{ font-size: 12.5px; color: var(--ink-soft); padding: 2px 0; display:flex; gap:7px; align-items:flex-start; }
-  .history-item-row.done{ color: var(--ink); }
-  .history-item-row .tick{ flex:0 0 auto; width:13px; }
-  .history-field{ font-size: 12px; color: var(--ink-soft); margin-top: 4px; }
-  .history-field b{ color: var(--ink); font-weight:600; }
-  .history-empty{ text-align:center; color: var(--ink-soft); font-family: var(--mono); font-size:11px; padding: 30px 0; }
-  .save-flag{ position:fixed; bottom: 18px; left:50%; transform: translateX(-50%) translateY(20px); font-family: var(--mono); font-size: 10px; letter-spacing:0.06em; text-transform:uppercase; color: #FFFDF8; background: linear-gradient(135deg, var(--marigold), var(--coral)); padding: 7px 14px; border-radius: 999px; opacity:0; transition: all 300ms ease; pointer-events:none; z-index: 50; box-shadow: 0 4px 14px rgba(224,120,86,0.35); }
-  .save-flag.show{ opacity:1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <div id="authBanner"></div>
-    <div class="head">
-      <div class="brand">
-        <h1>Steady State<span class="dot">.</span></h1>
-        <div class="date" id="todayLabel">—</div>
-      </div>
-      <p class="wordmark-tagline">Small rituals, real momentum.</p>
-    </div>
-
-    <div id="systemHeader" style="display:none">
-      <div class="tagline">
-        <span class="name" id="systemName">LOADING SYSTEM…</span>
-        <button class="switch-link" id="switchSystemBtn">Switch systems</button>
-      </div>
-      <div class="day-arc-wrap">
-        <div class="day-arc-top">
-          <div class="day-arc-label">Today's momentum</div>
-          <div class="day-arc-score" id="scoreLabel">0 / 10</div>
-        </div>
-        <div id="dayArcSvg"></div>
-      </div>
-    </div>
-
-    <div id="introView" style="display:none">
-      <div class="explainer">
-        <h2>What is Steady State?</h2>
-        <p>Steady State helps you build small systems around your day. An <b>anchor</b> is a moment that already happens without fail, like your morning coffee or the second you get into bed. You attach a short checklist to that moment, and each day you check off what you actually did.</p>
-        <p><b>How to use it:</b> look through the example below to see a full working system in action, or answer four quick questions to build one around your own day. Either way, you'll check in <b>daily</b>, build up a real history, and get a short <b>report</b> on what's working and what to change.</p>
-      </div>
-
-      <div id="continueBanner" class="choice-card" style="display:none; margin-bottom:16px;">
-        <div class="eyebrow">Welcome back</div>
-        <h3 id="continueName">Your system</h3>
-        <p>Pick up where you left off, or choose a different starting point below.</p>
-        <button class="btn primary full" id="continueBtn">Continue →</button>
-      </div>
-      <p class="intro-lead">An anchor attaches a new habit to something you already do without fail. Pick how you want to start.</p>
-      <div class="intro-wrap">
-        <div class="choice-card">
-          <div class="eyebrow">Example system</div>
-          <h3>The Steady State Example</h3>
-          <p>See a <b>full working example</b>. Four anchors are already built out, ready for you to look through before building your own. You can also just use it as-is.</p>
-          <button class="btn full" id="enterDefaultBtn">See the example →</button>
-        </div>
-        <div class="choice-card highlight">
-          <div class="eyebrow">Built for you</div>
-          <h3>Build Your Own System</h3>
-          <p>Answer <b>four quick questions</b> about your day and get a full four-anchor system built around your own life, with the same depth as the example, just yours.</p>
-          <button class="btn primary full" id="enterBuildBtn">Build My Own System →</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="mainView">
-      <div class="insight-card" id="insightCard" style="display:none">
-        <div class="insight-head">
-          <div class="insight-label">Daily report</div>
-          <button class="switch-link" id="regenInsightBtn" style="display:none">Regenerate</button>
-        </div>
-        <div id="insightBody" class="insight-body"></div>
-      </div>
-
-      <p class="rail-hint"><b>Checklist items</b> are things you do in the moment. Any <b>field</b> underneath is a quick note you type in when you check back in here, not something you write during the moment itself.</p>
-
-      <div id="anchorsRoot" class="rail">
-        <div class="rail-line"></div>
-        <div class="status">Setting up your anchors…</div>
-      </div>
-
-      <div class="add-anchor"><button class="btn" id="addAnchorBtn">+ Add anchor</button></div>
-
-      <div class="streak">
-        <div class="streak-head">
-          <div class="streak-title">Your last two weeks</div>
-          <button class="switch-link" id="viewHistoryBtn">View full history →</button>
-        </div>
-        <div class="streak-row" id="streakRow"></div>
-        <div class="streak-foot"><span id="streakStart">—</span><span>TODAY</span></div>
-      </div>
-    </div>
-
-    <div id="buildView" style="display:none">
-      <div class="build-intro">
-        <h2>Build your own system</h2>
-        <p>Here's how this works. You tell us <b>one moment that already happens</b> in your day, every day, like turning off your alarm. We turn that into what we call an <b>anchor</b>: a fixed point you build on. From then on, whenever that moment happens, you come back here and check off a short list tied to it. Four moments become four anchors, and together they make a simple system built around your actual day, not someone else's.</p>
-      </div>
-
-      <div class="build-q">
-        <div class="qnum"><svg class="qnum-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>Step 1: Morning</div>
-        <label>What's the first thing you do every morning, no matter what?</label>
-        <div class="hint">Something so automatic you don't even think about it.</div>
-        <button type="button" class="idea-toggle" data-target="q1-ideas">Need an idea?</button>
-        <div class="example-chips" id="q1-ideas" data-target="q1" style="display:none">
-          <button type="button" class="chip">First sip of coffee</button>
-          <button type="button" class="chip">Turning off your alarm</button>
-          <button type="button" class="chip">Brushing my teeth</button>
-        </div>
-        <textarea id="q1" rows="2" placeholder="Type your answer here"></textarea>
-      </div>
-      <div class="build-q">
-        <div class="qnum"><svg class="qnum-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2 -4 4 -4 6 0s4 4 6 0s4 -4 6 0"/><path d="M2 17c2 -4 4 -4 6 0s4 4 6 0s4 -4 6 0" opacity="0.5"/></svg>Step 2: Movement</div>
-        <label>When could you add a quick stretch to something you're already doing?</label>
-        <div class="hint">Any moment you're already up and moving works. It doesn't have to be exercise.</div>
-        <button type="button" class="idea-toggle" data-target="q2-ideas">Need an idea?</button>
-        <div class="example-chips" id="q2-ideas" data-target="q2" style="display:none">
-          <button type="button" class="chip">Getting out of bed</button>
-          <button type="button" class="chip">After a workout</button>
-          <button type="button" class="chip">Stretching after sitting a while</button>
-        </div>
-        <textarea id="q2" rows="2" placeholder="Type your answer here"></textarea>
-      </div>
-      <div class="build-q">
-        <div class="qnum"><svg class="qnum-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="6.2" opacity="0.6"/><circle cx="12" cy="12" r="9.6" opacity="0.3"/></svg>Step 3: Focus</div>
-        <label>When could you spend 20 to 30 minutes on something worth learning or reading?</label>
-        <div class="hint"><b>That's it, only 20 to 30 minutes.</b> Pick a time that could realistically work, even if you're not doing it yet.</div>
-        <button type="button" class="idea-toggle" data-target="q3-ideas">Need an idea?</button>
-        <div class="example-chips" id="q3-ideas" data-target="q3" style="display:none">
-          <button type="button" class="chip">Lunch break</button>
-          <button type="button" class="chip">Right after work</button>
-          <button type="button" class="chip">First 20 minutes at my desk</button>
-        </div>
-        <textarea id="q3" rows="2" placeholder="Type your answer here"></textarea>
-      </div>
-      <div class="build-q">
-        <div class="qnum"><svg class="qnum-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/><circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" stroke="none"/></svg>Step 4: Evening</div>
-        <label>What's the last thing you do every night before bed?</label>
-        <div class="hint">Something reliable. It already happens, no matter what kind of day it was.</div>
-        <button type="button" class="idea-toggle" data-target="q4-ideas">Need an idea?</button>
-        <div class="example-chips" id="q4-ideas" data-target="q4" style="display:none">
-          <button type="button" class="chip">Making tea</button>
-          <button type="button" class="chip">Brushing my teeth</button>
-          <button type="button" class="chip">Plugging in my phone</button>
-        </div>
-        <textarea id="q4" rows="2" placeholder="Type your answer here"></textarea>
-      </div>
-
-      <div class="build-error" id="buildError">All four answers need at least a few words.</div>
-
-      <div class="build-actions">
-        <button class="btn" id="buildCancelBtn">Cancel</button>
-        <button class="btn primary" id="buildSubmitBtn">Build my system</button>
-      </div>
-    </div>
-
-    <div id="historyView" style="display:none">
-      <div class="history-head">
-        <h2>Full history</h2>
-        <button class="switch-link" id="historyBackBtn">← Back</button>
-      </div>
-      <div id="historyList" class="history-list"></div>
-    </div>
-  </div>
-
-  <div class="save-flag" id="saveFlag">Saved</div>
+<div id="root"></div>
 
 <script type="module">
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const SUPABASE_URL = 'https://ntfjrtlrousluvblqhxi.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im50ZmpydGxyb3VzbHV2YmxxaHhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0NjUwNTksImV4cCI6MjEwMjA0MTA1OX0.dQ1TPNpcM23lPAYDbwYoSplHZdBwzQZNn06Z3hH9Zrg';
+// ============================================================
+// SUPABASE
+// Anonymous auth: each browser gets a persistent identity that the
+// RLS policies (user_id = auth.uid()) key off of. Swap in real
+// email/password or magic-link auth later without touching RLS.
+// ============================================================
+const SUPABASE_URL = "https://ntfjrtlrousluvblqhxi.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_IiaODesVMFFCUaWKSmBJog_APVhm7-u";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const el = (sel) => document.querySelector(sel);
-const anchorsRoot = el('#anchorsRoot');
-const saveFlag = el('#saveFlag');
-
-function todayStr(){
-  const d = new Date();
-  const local = new Date(d.getTime() - d.getTimezoneOffset()*60000);
-  return local.toISOString().slice(0,10);
+async function ensureSession() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) return session.user;
+  const { data, error } = await supabase.auth.signInAnonymously();
+  if (error) { console.error("Anonymous sign-in failed:", error.message); return null; }
+  return data.user;
 }
-function fmtDateLabel(){
-  return new Date().toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' }).toUpperCase();
-}
-function escapeHtml(str){ const d = document.createElement('div'); d.textContent = str || ''; return d.innerHTML; }
-function uid(){ return 'new_' + crypto.randomUUID(); }
 
-let state = {
-  userId: null,
-  userSystemId: null,
-  anchors: [],
-  entryId: null,
-  payload: { items:{}, fields:{} },
-  saveTimer: null,
-  editingId: null, // anchor id currently in edit mode
+async function saveTrackAssignment(trackId, quizScores, habitInfo) {
+  const user = await ensureSession();
+  if (!user) return;
+  const { label, trigger, sleepTarget } = habitInfo || {};
+  await supabase.from('user_track_assignments')
+    .update({ is_current: false }).eq('user_id', user.id).eq('is_current', true);
+  await supabase.from('user_track_assignments').insert({
+    user_id: user.id, track_id: trackId, quiz_scores: quizScores,
+    habit_label: label || null, habit_trigger: trigger || null,
+    sleep_target_hours: sleepTarget || null,
+    is_current: true,
+  });
+}
+
+async function fetchCurrentAssignment(trackId) {
+  const user = await ensureSession();
+  if (!user) return null;
+  const { data, error } = await supabase.from('user_track_assignments')
+    .select('habit_label, habit_trigger, sleep_target_hours').eq('user_id', user.id).eq('track_id', trackId)
+    .eq('is_current', true).order('assigned_at', { ascending: false }).limit(1).maybeSingle();
+  if (error) return null;
+  return data;
+}
+
+// Demo-only: writes the simulated 14-day history so the "simulate"
+// buttons have something real to visualize trend behavior with,
+// without needing 14 real days of check-ins yet.
+async function persistDailyLogs(trackId, days) {
+  const user = await ensureSession();
+  if (!user) return;
+  const rows = days.map((d, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (days.length - 1 - i));
+    const { day, composite, ...levers } = d;
+    return {
+      user_id: user.id, track_id: trackId, log_date: date.toISOString().slice(0, 10),
+      levers, composite_score: composite,
+    };
+  });
+  await supabase.from('daily_logs').upsert(rows, { onConflict: 'user_id,track_id,log_date' });
+}
+
+function scoreDay(track, values) {
+  if (track === 'energy') {
+    const target = state.sleepTarget || 8;
+    const sleepScore = Math.min(values.sleep_hours / target, 1) * 100;
+    const movedScore = values.moved ? 100 : 40;
+    const feelScore = (values.energy_score / 5) * 100;
+    return Math.round((sleepScore + movedScore + feelScore) / 3);
+  }
+  if (track === 'consistency') {
+    const completedScore = values.completed ? 100 : 20;
+    const streakScore = Math.min(values.streak / 10, 1) * 100;
+    return Math.round((completedScore + streakScore) / 2);
+  }
+  const feelScore = (values.presence_score / 5) * 100;
+  const distractionScore = Math.max(0, (10 - values.distraction_count) / 10) * 100;
+  return Math.round((feelScore + distractionScore) / 2);
+}
+
+async function fetchLatestLog(trackId) {
+  const user = await ensureSession();
+  if (!user) return null;
+  const { data, error } = await supabase.from('daily_logs')
+    .select('log_date, levers').eq('user_id', user.id).eq('track_id', trackId)
+    .order('log_date', { ascending: false }).limit(1);
+  if (error || !data || data.length === 0) return null;
+  return data[0];
+}
+
+async function fetchTodayLog(trackId) {
+  const user = await ensureSession();
+  if (!user) return null;
+  const today = new Date().toISOString().slice(0, 10);
+  const { data, error } = await supabase.from('daily_logs')
+    .select('log_date, levers, composite_score, moment_timestamps')
+    .eq('user_id', user.id).eq('track_id', trackId).eq('log_date', today).maybeSingle();
+  if (error) return null;
+  return data;
+}
+
+// Saves a single moment's value for today, merging it into whatever's
+// already been logged today rather than overwriting the whole day —
+// this is what lets someone log sleep in the morning and energy in
+// the evening as two separate touches instead of one end-of-day form.
+async function saveMoment(trackId, key, value) {
+  const user = await ensureSession();
+  if (!user) return null;
+  const today = new Date().toISOString().slice(0, 10);
+  const existing = await fetchTodayLog(trackId);
+  const levers = { ...(existing?.levers || {}), [key]: value };
+  const timestamps = { ...(existing?.moment_timestamps || {}), [key]: new Date().toISOString() };
+  const composite = scorePartialDay(trackId, levers);
+  const { error } = await supabase.from('daily_logs').upsert({
+    user_id: user.id, track_id: trackId, log_date: today,
+    levers, moment_timestamps: timestamps, composite_score: composite,
+    updated_at: new Date().toISOString(),
+  }, { onConflict: 'user_id,track_id,log_date' });
+  if (error) { console.error('Moment save failed:', error.message); return null; }
+  return { levers, moment_timestamps: timestamps, composite_score: composite };
+}
+
+// Checks the user's own tagged citations first, falls back to the
+// public system-generated library, and falls back again to the
+// hardcoded CITATION_LIBRARY below if the network call fails.
+async function fetchCitation(trackId, lever) {
+  const { data, error } = await supabase.from('citation_library')
+    .select('finding, why, action, source').eq('track_id', trackId).eq('lever', lever);
+  if (error || !data || data.length === 0) return null;
+  const own = data.find((r) => r.source === 'user');
+  const row = own || data[0];
+  return `${row.finding} ${row.why} ${row.action}`;
+}
+
+// ============================================================
+// DESIGN TOKENS / TRACKS / QUIZ (mirrors onboarding-prototype-v2.jsx)
+// ============================================================
+const COLORS = {
+  bg: "#0B0D12", panel: "#13161D", panelRaised: "#181B24", line: "#22262F",
+  text: "#F2F0EA", muted: "#8B8F9C", good: "#6FCF97", warn: "#FF6B5B",
+  presence: "#8EA6FF", consistency: "#F2B84B", energy: "#FF6B5B",
 };
 
-// --- Auth: real per-visitor identity via Supabase anonymous sign-in ---
-async function ensureSession(){
-  const { data: { session } } = await supabase.auth.getSession();
-  if(session) return session;
-  const { data, error } = await supabase.auth.signInAnonymously();
-  if(error) throw error;
-  return data.session;
+const TRACKS = {
+  presence: {
+    name: "Presence", color: COLORS.presence,
+    tagline: "Fewer scattered moments, more of you actually here.",
+    metricLabel: "Present minutes", checkin: "One grounding prompt, once a day.",
+    levers: ["distraction_count", "presence_score"],
+    leverLabels: { distraction_count: "distraction count", presence_score: "grounded feeling" },
+    moments: [
+      { key: "presence_score", time: "Midday", label: "How grounded do you feel right now? (1-5)", type: "stepper", min: 1, max: 5, step: 1,
+        guidance: "Try this: before you answer, take one slow breath and notice your feet on the floor. Rate how you feel after that, not before." },
+      { key: "distraction_count", time: "Evening", label: "How many times did you get pulled away today?", type: "stepper", min: 0, max: 20, step: 1,
+        guidance: "Try this: put your phone in another room for one stretch tomorrow, even 20 minutes — it's the easiest lever to pull on this number." },
+    ],
+  },
+  consistency: {
+    name: "Consistency", color: COLORS.consistency,
+    tagline: "Fewer dropped habits, more days that build on each other.",
+    metricLabel: "Streak completion", checkin: "A streak, and a few small pushes to get there.",
+    levers: ["completed", "streak"],
+    leverLabels: {
+      intention_set: "morning intention", obstacle_removed: "removing friction",
+      completed: "daily follow-through", streak: "streak length",
+    },
+    moments: [
+      { key: "intention_set", time: "Morning", label: "Set today's intention", type: "toggle", showsHabit: true,
+        guidance: "Try this: picture the exact moment you'll do it today, before the day gets busy." },
+      { key: "obstacle_removed", time: "Midday", label: "Make it a little easier today", type: "toggle", showsHabit: true,
+        guidance: "Get ahead of whatever usually stops you. A little prep now means no excuse later." },
+      { key: "completed", time: "Evening", label: "Did you follow through today?", type: "toggle", showsHabit: true,
+        guidance: "Try this: do the smallest version that still counts. Showing up small beats skipping entirely — you can go bigger tomorrow." },
+    ],
+  },
+  energy: {
+    name: "Energy", color: COLORS.energy,
+    tagline: "Fewer 3pm crashes, more fuel left at the end of the day.",
+    metricLabel: "Energy score", checkin: "Log your energy, pull one lever.",
+    levers: ["sleep_hours", "moved", "energy_score"],
+    leverLabels: { sleep_hours: "sleep", moved: "movement", energy_score: "self-rated energy" },
+    moments: [
+      { key: "sleep_hours", time: "Morning", label: "Log last night's sleep", type: "stepper", min: 0, max: 12, step: 0.5,
+        guidance: "Try this: if last night was short, tonight's target is just 30 minutes earlier — not a full reset. Small adjustments compound." },
+      { key: "moved", time: "Midday", label: "Have you moved today?", type: "toggle",
+        guidance: "Try this: a 10-minute walk after lunch counts. It doesn't need to be a workout to move this number." },
+      { key: "energy_score", time: "Evening", label: "Rate your energy right now (1-5)", type: "stepper", min: 1, max: 5, step: 1,
+        guidance: "Try this: rate honestly, not hopefully. An accurate low score is what lets tomorrow's plan actually help." },
+    ],
+  },
+};
+
+// Suggested starting points for the "define your habit/practice" step.
+// People land on the Presence track precisely because they don't have
+// a ready answer here — so offer real examples, not a blank box.
+const EXAMPLE_PRACTICES = {
+  presence: [
+    "One slow breath before you open your phone",
+    "Name 3 things you can see, 2 you can hear, 1 you can feel",
+    "Put your phone in another room during meals",
+    "Feel your feet on the floor before replying to a hard message",
+    "A 2-minute walk outside without your phone",
+    "Pause and notice your shoulders before starting a new task",
+  ],
+  consistency: [
+    "Floss right after brushing at night",
+    "No phone for the first 10 minutes after waking up",
+    "Read 10 pages before bed",
+    "A 10-minute walk after lunch",
+    "Write down one thing you're grateful for each night",
+  ],
+};
+
+function momentLabel(track, moment, habitLabel) {
+  return moment.label.replace("{habit}", habitLabel || "your habit");
 }
 
-function showAuthError(err){
-  const msg = (err && err.message) || 'Unknown error';
-  el('#authBanner').innerHTML = `
-    <div class="banner">
-      <b>Setup needed:</b> this app uses anonymous sign-in so each visitor gets their own private data,
-      but it isn't turned on for this project yet.<br/><br/>
-      Fix: Supabase Dashboard → Authentication → Sign In / Providers → enable
-      <code>Allow anonymous sign-ins</code>, then reload this page.<br/><br/>
-      <span style="color:var(--ink-soft)">Details: ${escapeHtml(msg)}</span>
+// Scores whatever moments have been logged so far today, ignoring
+// ones not yet filled in — lets "today's progress" show mid-day
+// instead of waiting for every moment to be completed.
+function scorePartialDay(track, values) {
+  const present = Object.keys(values);
+  if (present.length === 0) return null;
+  if (track === "energy") {
+    const target = state.sleepTarget || 8;
+    const parts = [];
+    if ("sleep_hours" in values) parts.push(Math.min(values.sleep_hours / target, 1) * 100);
+    if ("moved" in values) parts.push(values.moved ? 100 : 40);
+    if ("energy_score" in values) parts.push((values.energy_score / 5) * 100);
+    if (parts.length === 0) return null;
+    return Math.round(parts.reduce((a, b) => a + b, 0) / parts.length);
+  }
+  if (track === "consistency") {
+    // Weighted so the actual habit (not just intending to do it) still
+    // drives the score most — the supportive moments nudge it, they
+    // don't substitute for it.
+    const weighted = [];
+    if ("intention_set" in values) weighted.push([values.intention_set ? 100 : 40, 1]);
+    if ("obstacle_removed" in values) weighted.push([values.obstacle_removed ? 100 : 40, 1]);
+    if ("completed" in values) weighted.push([values.completed ? 100 : 20, 3]);
+    if ("streak" in values) weighted.push([Math.min(values.streak / 10, 1) * 100, 2]);
+    if (weighted.length === 0) return null;
+    const totalWeight = weighted.reduce((a, [, w]) => a + w, 0);
+    return Math.round(weighted.reduce((a, [v, w]) => a + v * w, 0) / totalWeight);
+  }
+  const parts = [];
+  if ("presence_score" in values) parts.push((values.presence_score / 5) * 100);
+  if ("distraction_count" in values) parts.push(Math.max(0, (10 - values.distraction_count) / 10) * 100);
+  if (parts.length === 0) return null;
+  return Math.round(parts.reduce((a, b) => a + b, 0) / parts.length);
+}
+
+const QUESTIONS = [
+  { id: "q1", prompt: "When things start to slip, what happens first?",
+    why: "Tells us where things tend to break down.",
+    options: [
+      { label: "I get pulled into my phone and lose the thread", track: "presence", weight: 1 },
+      { label: "I skip the habit or routine I meant to do", track: "consistency", weight: 1 },
+      { label: "I just run out of steam and coast", track: "energy", weight: 1 },
+    ] },
+  { id: "q2", prompt: "How do you feel most afternoons, around 2–4pm?",
+    why: "Afternoon state is one of the clearest signals we get.",
+    options: [
+      { label: "Foggy — like I'm not really \"there\"", track: "presence", weight: 1 },
+      { label: "Fine, but I've already broken today's plan", track: "consistency", weight: 1 },
+      { label: "Drained, need caffeine or a nap", track: "energy", weight: 2 },
+    ] },
+  { id: "q3", prompt: "Think about the last habit you tried to build. What happened?",
+    why: "Past attempts predict what'll trip you up next.",
+    options: [
+      { label: "I was consistent for a week or two, then just stopped completely", track: "consistency", weight: 2 },
+      { label: "I did it, but my mind was somewhere else the whole time", track: "presence", weight: 1 },
+      { label: "I kept it up for a while, then just ran out of gas", track: "energy", weight: 1 },
+    ] },
+  { id: "q4", prompt: "What does \"a good day\" feel like to you?",
+    why: "Your definition of a win points to the right track.",
+    options: [
+      { label: "Calm, focused, not rushing from thing to thing", track: "presence", weight: 1 },
+      { label: "Everything on my list got done, no matter how", track: "consistency", weight: 1 },
+      { label: "I had energy left at the end of it", track: "energy", weight: 1 },
+    ] },
+  { id: "q5", prompt: "How's your sleep, generally?",
+    why: "Sleep disruption is a strong predictor across all three.",
+    options: [
+      { label: "Fine, but my mind won't quiet down", track: "presence", weight: 1 },
+      { label: "Inconsistent — no real bedtime routine", track: "consistency", weight: 1 },
+      { label: "Poor, and it wrecks the next day", track: "energy", weight: 2 },
+    ] },
+  { id: "q6", prompt: "What's pulled you toward an app like this?",
+    why: "Your own words about why you're here matter most.",
+    options: [
+      { label: "Wanting to feel less scattered, more grounded", track: "presence", weight: 1 },
+      { label: "Wanting to actually stick with something for once", track: "consistency", weight: 1 },
+      { label: "Wanting to stop feeling exhausted all the time", track: "energy", weight: 1 },
+    ] },
+];
+
+const TIEBREAKER = {
+  id: "q7", prompt: "If you could only fix ONE of these right now, which matters most?",
+  why: "Your first six answers were close — this one decides it.",
+  options: [
+    { label: "Being more present", track: "presence", weight: 1 },
+    { label: "Being more consistent", track: "consistency", weight: 1 },
+    { label: "Having more energy", track: "energy", weight: 1 },
+  ],
+};
+
+function scoreAnswers(answers) {
+  const score = { presence: 0, consistency: 0, energy: 0 };
+  answers.forEach((a) => { score[a.track] += a.weight; });
+  return score;
+}
+function topTwo(score) {
+  const sorted = Object.entries(score).sort((a, b) => b[1] - a[1]);
+  return { top: sorted[0], second: sorted[1] };
+}
+function activeQuestions(answers) {
+  const base = [...QUESTIONS];
+  if (answers.length === 6) {
+    const s = scoreAnswers(answers);
+    const { top, second } = topTwo(s);
+    if (top[1] - second[1] === 0) base.push(TIEBREAKER);
+  }
+  return base;
+}
+
+function makeDay(track, dayIndex, trend) {
+  const base = 78 + trend * dayIndex * 1.4;
+  const noise = (Math.sin(dayIndex * 1.7) * 6);
+  const composite = Math.max(30, Math.min(100, Math.round(base + noise)));
+  if (track === "energy") {
+    return { day: dayIndex, energy_score: Math.round(composite / 20),
+      sleep_hours: Math.round((composite / 100) * 3 + 5), moved: composite > 55, composite };
+  }
+  if (track === "consistency") {
+    return { day: dayIndex, completed: composite > 50,
+      streak: composite > 50 ? Math.max(1, Math.round(composite / 12)) : 0, composite };
+  }
+  return { day: dayIndex, presence_score: Math.round(composite / 20),
+    distraction_count: Math.max(0, Math.round((100 - composite) / 10)), composite };
+}
+function rollingAverage(days, windowSize = 7) {
+  const w = days.slice(-windowSize);
+  return Math.round(w.reduce((a, d) => a + d.composite, 0) / w.length);
+}
+function findWeakestLever(track, days) {
+  const window = days.slice(-7);
+  if (track === "energy") {
+    const avgSleep = window.reduce((a, d) => a + d.sleep_hours, 0) / window.length;
+    const avgMoved = window.filter((d) => d.moved).length / window.length;
+    const avgScore = window.reduce((a, d) => a + d.energy_score, 0) / window.length;
+    const scores = { sleep_hours: avgSleep / 8, moved: avgMoved, energy_score: avgScore / 5 };
+    return Object.entries(scores).sort((a, b) => a[1] - b[1])[0][0];
+  }
+  if (track === "consistency") {
+    const avgCompleted = window.filter((d) => d.completed).length / window.length;
+    const avgStreak = window.reduce((a, d) => a + d.streak, 0) / window.length;
+    const scores = { completed: avgCompleted, streak: avgStreak / 10 };
+    return Object.entries(scores).sort((a, b) => a[1] - b[1])[0][0];
+  }
+  const avgScore = window.reduce((a, d) => a + d.presence_score, 0) / window.length;
+  const avgDistraction = window.reduce((a, d) => a + d.distraction_count, 0) / window.length;
+  const scores = { presence_score: avgScore / 5, distraction_count: 1 - avgDistraction / 10 };
+  return Object.entries(scores).sort((a, b) => a[1] - b[1])[0][0];
+}
+
+const CITATION_LIBRARY = {
+  energy: {
+    sleep_hours: "People who sleep under six hours a night show measurably lower afternoon energy and focus the next day. That's likely what's driving your dip this week. Try adding even thirty minutes tonight and watch tomorrow's score.",
+    moved: "Even ten minutes of light movement raises circulating energy more reliably than caffeine, according to activity research. Your movement's been light this week, which tracks with the dip. A short walk after lunch is an easy lever to pull.",
+    energy_score: "Self-rated energy tends to predict next-day output better than sleep hours alone. Yours has been trending low, which usually means the dip is compounding. Naming it each day, honestly, is often the first thing that turns it around.",
+  },
+  consistency: {
+    completed: "Habit researchers find that missing a single day rarely breaks a streak's momentum, but missing two in a row usually does. You're right at that edge this week. Doing today's version, even a small one, resets the pattern.",
+    streak: "Shorter streaks are more fragile to disruption than longer ones, which is normal, not a failure. Yours has reset recently. Rebuilding from day one with an easier version of the habit tends to stick better than jumping back to full intensity.",
+  },
+  presence: {
+    distraction_count: "Frequent context-switching has been shown to slow return-to-focus time by several minutes each time it happens. Your distraction count has been climbing this week. One phone-free stretch today, even fifteen minutes, can start to reverse that.",
+    presence_score: "People who rate themselves as scattered tend to underestimate how much small grounding moments help, more than long sessions do. Your self-rating's been low this week. A single slow breath before your next task is a small, real lever.",
+  },
+};
+function getCitation(track, lever) { return CITATION_LIBRARY[track][lever]; }
+
+// ============================================================
+// SVG HELPERS
+// ============================================================
+function arcSVG(percent, color, size = 120, stroke = 10, showLabel = true) {
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const offset = c - (Math.min(Math.max(percent, 0), 100) / 100) * c;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    <circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="${COLORS.line}" stroke-width="${stroke}" />
+    <circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}"
+      stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${offset}"
+      transform="rotate(-90 ${size / 2} ${size / 2})" style="transition: stroke-dashoffset .6s ease" />
+    ${showLabel ? `<text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" fill="${COLORS.text}" font-size="${size * 0.2}" font-family="Georgia, serif">${Math.round(percent)}%</text>` : ""}
+  </svg>`;
+}
+function sparklineSVG(days, color, threshold = 80, width = 280, height = 60) {
+  const window = days.slice(-14);
+  const max = 100, min = 30;
+  const stepX = width / (window.length - 1);
+  const toY = (v) => height - ((v - min) / (max - min)) * height;
+  const points = window.map((d, i) => `${i * stepX},${toY(d.composite)}`).join(" ");
+  const thresholdY = toY(threshold);
+  const dots = window.map((d, i) =>
+    `<circle cx="${i * stepX}" cy="${toY(d.composite)}" r="${d.composite < threshold ? 3 : 2}" fill="${d.composite < threshold ? COLORS.warn : color}" />`
+  ).join("");
+  return `<svg width="${width}" height="${height}" style="overflow:visible">
+    <line x1="0" y1="${thresholdY}" x2="${width}" y2="${thresholdY}" stroke="${COLORS.line}" stroke-width="1" stroke-dasharray="4 4" />
+    <polyline points="${points}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+    ${dots}
+  </svg>`;
+}
+
+// ============================================================
+// APP STATE + RENDER
+// ============================================================
+const el = (sel) => document.querySelector(sel);
+const root = document.getElementById("root");
+
+const state = {
+  screen: "welcome", step: 0, answers: [], track: null,
+  trendMode: 0, prevStreak: 0, todayLog: undefined,
+  citation: null, citationFetchedForLever: null,
+  habitLabel: null, habitTrigger: null, sleepTarget: 8,
+  habitDraft: "", habitTriggerDraft: "", sleepTargetDraft: 8, showIdeas: false,
+  todayValues: {}, expandedMoment: null, saving: false,
+};
+
+function resetApp() {
+  Object.assign(state, {
+    screen: "welcome", step: 0, answers: [], track: null,
+    trendMode: 0, prevStreak: 0, todayLog: undefined,
+    citation: null, citationFetchedForLever: null,
+    habitLabel: null, habitTrigger: null, sleepTarget: 8,
+    habitDraft: "", habitTriggerDraft: "", sleepTargetDraft: 8, showIdeas: false,
+    todayValues: {}, expandedMoment: null, saving: false,
+  });
+  render();
+}
+
+function render() {
+  let html = "";
+  if (state.screen === "welcome") html = renderWelcome();
+  else if (state.screen === "quiz") html = renderQuiz();
+  else if (state.screen === "results") html = renderResults();
+  else if (state.screen === "define") html = renderDefine();
+  else if (state.screen === "dashboard") html = renderDashboard();
+  else if (state.screen === "today") html = renderToday();
+
+  root.innerHTML = `
+    <div class="frame">${html}</div>
+    ${state.screen !== "welcome" ? '<div class="center"><button class="reset-link" id="resetLink">restart prototype</button></div>' : ""}
+  `;
+  bindEvents();
+}
+
+function bindEvents() {
+  el("#resetLink")?.addEventListener("click", resetApp);
+
+  if (state.screen === "welcome") {
+    el("#startBtn")?.addEventListener("click", () => { state.screen = "quiz"; state.step = 0; render(); });
+  }
+
+  if (state.screen === "quiz") {
+    const q = activeQuestions(state.answers)[state.step];
+    root.querySelectorAll(".option-btn").forEach((btn) => {
+      btn.addEventListener("click", () => handleAnswer(q.options[+btn.dataset.idx]));
+    });
+  }
+
+  if (state.screen === "results") {
+    el("#continueBtn")?.addEventListener("click", () => {
+      state.screen = "define";
+      state.habitDraft = "";
+      state.habitTriggerDraft = "";
+      state.sleepTargetDraft = 8;
+      state.showIdeas = false;
+      render();
+    });
+  }
+
+  if (state.screen === "define") {
+    const habitInput = el("#habitInput");
+    const triggerInput = el("#triggerInput");
+    habitInput?.addEventListener("input", (e) => { state.habitDraft = e.target.value; });
+    triggerInput?.addEventListener("input", (e) => { state.habitTriggerDraft = e.target.value; });
+    el("#ideaToggleBtn")?.addEventListener("click", () => { state.showIdeas = !state.showIdeas; render(); });
+    root.querySelectorAll("[data-idea-chip]").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        state.habitDraft = chip.dataset.ideaChip;
+        render();
+        el("#habitInput")?.focus();
+      });
+    });
+    root.querySelectorAll("[data-sleep-target-stepper]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const dir = +btn.dataset.dir;
+        const next = Math.min(11, Math.max(5, +(state.sleepTargetDraft + dir * 0.5).toFixed(1)));
+        state.sleepTargetDraft = next;
+        render();
+      });
+    });
+    el("#defineContinueBtn")?.addEventListener("click", async () => {
+      if (state.track === "energy") {
+        const score = scoreAnswers(state.answers);
+        await saveTrackAssignment(state.track, score, { sleepTarget: state.sleepTargetDraft });
+        state.sleepTarget = state.sleepTargetDraft;
+        enterDashboard();
+        return;
+      }
+      const label = (state.habitDraft || "").trim();
+      if (!label) { if (habitInput) habitInput.style.borderColor = COLORS.warn; return; }
+      const trigger = (state.habitTriggerDraft || "").trim();
+      const score = scoreAnswers(state.answers);
+      await saveTrackAssignment(state.track, score, { label, trigger });
+      state.habitLabel = label;
+      state.habitTrigger = trigger || null;
+      enterDashboard();
+    });
+  }
+
+  if (state.screen === "dashboard") {
+    el("#checkinBtn")?.addEventListener("click", enterToday);
+    el("#simDip")?.addEventListener("click", () => setTrendMode(-1));
+    el("#simSteady")?.addEventListener("click", () => setTrendMode(0));
+    el("#simRise")?.addEventListener("click", () => setTrendMode(1));
+    el("#requizBtn")?.addEventListener("click", resetApp);
+    el("#retakeBtn")?.addEventListener("click", resetApp);
+  }
+
+  if (state.screen === "today") {
+    root.querySelectorAll("[data-today-stepper]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = btn.dataset.todayStepper;
+        const dir = +btn.dataset.dir, step = +btn.dataset.step, min = +btn.dataset.min, max = +btn.dataset.max;
+        const next = Math.min(max, Math.max(min, +(state.todayValues[key] + dir * step).toFixed(2)));
+        state.todayValues[key] = next;
+        render();
+      });
+    });
+    root.querySelectorAll("[data-today-toggle]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        state.todayValues[btn.dataset.todayToggle] = btn.dataset.value === "true";
+        render();
+      });
+    });
+    root.querySelectorAll("[data-edit-moment]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = btn.dataset.editMoment;
+        state.todayValues[key] = state.todayLog?.levers?.[key] ?? state.todayValues[key];
+        state.expandedMoment = key;
+        render();
+      });
+    });
+    root.querySelectorAll("[data-save-moment]").forEach((btn) => {
+      btn.addEventListener("click", () => handleSaveMoment(btn.dataset.saveMoment));
+    });
+    el("#backToDashboardBtn")?.addEventListener("click", () => { state.screen = "dashboard"; render(); });
+  }
+}
+
+// ---- Quiz flow ----
+function handleAnswer(opt) {
+  const next = [...state.answers, opt];
+  state.answers = next;
+
+  const needsTiebreaker = next.length === 6 && (() => {
+    const s = scoreAnswers(next);
+    const { top, second } = topTwo(s);
+    return top[1] - second[1] === 0;
+  })();
+
+  if (next.length === 6 && needsTiebreaker) { state.step += 1; render(); return; }
+  if ((next.length === 6 && !needsTiebreaker) || next.length === 7) {
+    const finalScore = scoreAnswers(next);
+    const { top } = topTwo(finalScore);
+    state.track = top[0];
+    state.screen = "results";
+    render();
+    return;
+  }
+  state.step += 1;
+  render();
+}
+
+// ---- Dashboard lifecycle ----
+function enterDashboard() {
+  state.screen = "dashboard";
+  state.trendMode = 0;
+  state.todayLog = undefined;
+  state.citation = null;
+  state.citationFetchedForLever = null;
+  render();
+  refreshDashboardData();
+  if ((state.track === "consistency" || state.track === "presence") && !state.habitLabel) {
+    fetchCurrentAssignment(state.track).then((a) => {
+      if (a?.habit_label) {
+        state.habitLabel = a.habit_label;
+        state.habitTrigger = a.habit_trigger || null;
+        render();
+      }
+    });
+  }
+  if (state.track === "energy") {
+    fetchCurrentAssignment(state.track).then((a) => {
+      if (a?.sleep_target_hours) {
+        state.sleepTarget = Number(a.sleep_target_hours);
+        render();
+      }
+    });
+  }
+}
+function setTrendMode(v) {
+  state.trendMode = v;
+  state.citation = null;
+  state.citationFetchedForLever = null;
+  render();
+  refreshDashboardData();
+}
+function currentDays() {
+  return Array.from({ length: 14 }, (_, i) => makeDay(state.track, i, state.trendMode));
+}
+function refreshDashboardData() {
+  const days = currentDays();
+  persistDailyLogs(state.track, days);
+  fetchTodayLog(state.track).then((log) => { state.todayLog = log; render(); });
+
+  const rolling = rollingAverage(days);
+  if (rolling < 80) {
+    const weakestLever = findWeakestLever(state.track, days);
+    if (state.citationFetchedForLever !== weakestLever) {
+      state.citation = getCitation(state.track, weakestLever);
+      state.citationFetchedForLever = weakestLever;
+      fetchCitation(state.track, weakestLever).then((live) => {
+        if (live) { state.citation = live; render(); }
+      });
+    }
+  }
+}
+
+// ---- "Today" moments lifecycle: several small check-ins through
+// the day instead of one end-of-day form ----
+function defaultTodayValues(track) {
+  if (track === "energy") return { sleep_hours: 7, moved: false, energy_score: 3 };
+  if (track === "consistency") return { completed: false };
+  return { distraction_count: 5, presence_score: 3 };
+}
+function enterToday() {
+  state.screen = "today";
+  state.expandedMoment = null;
+  state.todayValues = defaultTodayValues(state.track);
+  render();
+  fetchTodayLog(state.track).then((log) => {
+    state.todayLog = log;
+    if (log?.levers) state.todayValues = { ...state.todayValues, ...log.levers };
+    render();
+  });
+  if (state.track === "consistency") {
+    fetchLatestLog(state.track).then((latest) => { state.prevStreak = latest?.levers?.streak ?? 0; });
+  }
+}
+async function handleSaveMoment(key) {
+  const track = state.track;
+  let values = { [key]: state.todayValues[key] };
+  if (track === "consistency" && key === "completed") {
+    const streak = state.todayValues.completed ? state.prevStreak + 1 : 0;
+    values = { completed: state.todayValues.completed, streak };
+  }
+  const result = await saveMoment(track, key, values);
+  if (result) {
+    state.todayLog = { ...state.todayLog, ...result };
+  }
+  state.expandedMoment = null;
+  render();
+}
+
+// ============================================================
+// SCREEN TEMPLATES
+// ============================================================
+function renderWelcome() {
+  return `
+    <div class="center">
+      <div class="eyebrow">ONBOARDING · 6 QUESTIONS</div>
+      <h1 class="h1">Built for the way<br/>you work.</h1>
+      <p class="lede">A few honest questions about where things actually break down for you — then we'll match you to the system built for that.</p>
+      <button class="primary-btn" id="startBtn">Begin →</button>
     </div>`;
 }
 
-async function ensureProfile(userId){
-  let { data: profile } = await supabase.from('profiles').select('*').eq('user_id', userId).maybeSingle();
-  if(!profile){ await supabase.from('profiles').insert({ user_id: userId }); }
+function renderQuiz() {
+  const qs = activeQuestions(state.answers);
+  const question = qs[state.step];
+  const total = qs.length;
+  const stepNum = state.step + 1;
+  const dots = Array.from({ length: total }).map((_, i) =>
+    `<div class="progress-dot ${i < stepNum ? "on" : ""}"></div>`
+  ).join("");
+  const options = question.options.map((opt, i) =>
+    `<button class="option-btn" data-idx="${i}">${opt.label}</button>`
+  ).join("");
+  return `
+    <div class="center">
+      <div class="progress-row">${dots}</div>
+      <div class="eyebrow">QUESTION ${stepNum} OF ${total}</div>
+      <h2 class="h2">${question.prompt}</h2>
+      <p class="why">${question.why}</p>
+      <div class="option-list">${options}</div>
+    </div>`;
 }
 
-// Activates the Steady State example system for this user. Reuses a previously-cloned
-// copy if one exists (so edits aren't lost by switching back and forth),
-// otherwise clones fresh from the template.
-async function activateDefaultSystem(userId){
-  await ensureProfile(userId);
-
-  const { data: template } = await supabase.from('system_templates').select('*').eq('visibility','public').order('created_at').limit(1).maybeSingle();
-  if(!template) throw new Error('No system template available.');
-
-  const { data: prior } = await supabase.from('user_systems').select('*')
-    .eq('user_id', userId).eq('source_template_id', template.id)
-    .order('created_at', { ascending: false }).limit(1).maybeSingle();
-
-  await supabase.from('user_systems').update({ active: false }).eq('user_id', userId).eq('active', true);
-
-  if(prior){
-    await supabase.from('user_systems').update({ active: true }).eq('id', prior.id);
-    return { ...prior, active: true };
-  }
-
-  const { data: newSystem } = await supabase.from('user_systems').insert({
-    user_id: userId, source_template_id: template.id, name: template.title, active: true
-  }).select().single();
-
-  const { data: tAnchors } = await supabase.from('template_anchors').select('*').eq('template_id', template.id).order('position');
-  for(const ta of tAnchors){
-    const { data: ua } = await supabase.from('user_anchors').insert({
-      user_system_id: newSystem.id, position: ta.position, name: ta.name,
-      trigger_text: ta.trigger_text, purpose: ta.purpose, tolerance: ta.tolerance, signal_text: ta.signal_text
-    }).select().single();
-
-    const { data: tItems } = await supabase.from('template_anchor_items').select('*').eq('anchor_id', ta.id).order('position');
-    if(tItems && tItems.length){
-      await supabase.from('user_anchor_items').insert(tItems.map(it => ({ user_anchor_id: ua.id, position: it.position, label: it.label, active:true })));
-    }
-    const { data: tFields } = await supabase.from('template_anchor_fields').select('*').eq('anchor_id', ta.id).order('position');
-    if(tFields && tFields.length){
-      await supabase.from('user_anchor_fields').insert(tFields.map(f => ({ user_anchor_id: ua.id, position: f.position, label: f.label, field_type: f.field_type })));
-    }
-  }
-  return newSystem;
-}
-
-function setView(view){
-  el('#introView').style.display = view === 'intro' ? 'block' : 'none';
-  el('#systemHeader').style.display = (view === 'main' || view === 'history') ? 'block' : 'none';
-  el('#mainView').style.display = view === 'main' ? 'block' : 'none';
-  el('#buildView').style.display = view === 'build' ? 'block' : 'none';
-  el('#historyView').style.display = view === 'history' ? 'block' : 'none';
-}
-
-async function loadIntoMain(system){
-  state.userSystemId = system.id;
-  state.sourceTemplateId = system.source_template_id;
-  el('#systemName').textContent = system.name.toUpperCase();
-
-  state.anchors = await loadAnchors(system);
-  const today = await loadTodayEntry(system.id);
-  state.entryId = today.id;
-  state.payload = today.payload;
-  if(!state.payload.fields) state.payload.fields = {};
-
-  setView('main');
-  renderAnchors();
-  renderScore();
-  renderStreak(await loadStreak(system.id));
-  ensureDailyInsight(system.id);
-}
-
-async function loadAnchors(userSystem){
-  const { data: uAnchors } = await supabase.from('user_anchors').select('*').eq('user_system_id', userSystem.id).order('position');
-  const anchors = [];
-  for(const a of (uAnchors||[])){
-    const { data: items } = await supabase.from('user_anchor_items').select('*').eq('user_anchor_id', a.id).eq('active', true).order('position');
-    const { data: fields } = await supabase.from('user_anchor_fields').select('*').eq('user_anchor_id', a.id).order('position');
-    anchors.push({
-      id: a.id, position: a.position, name: a.name, trigger_text: a.trigger_text, purpose: a.purpose, tolerance: a.tolerance,
-      signal_text: a.signal_text || '',
-      items: (items||[]).map(it => ({ id: it.id, label: it.label })),
-      fields: (fields||[]).map(f => ({ id: f.id, label: f.label, field_type: f.field_type || 'text' }))
-    });
-  }
-  return anchors;
-}
-
-async function loadTodayEntry(userSystemId){
-  const { data } = await supabase.from('daily_entries').select('*').eq('user_system_id', userSystemId).eq('entry_date', todayStr()).maybeSingle();
-  if(data) return { id: data.id, payload: data.payload && data.payload.items ? data.payload : { items:{}, fields:{} } };
-  return { id: null, payload: { items:{}, fields:{} } };
-}
-
-async function loadStreak(userSystemId){
-  const { data } = await supabase.from('daily_entries').select('entry_date, score').eq('user_system_id', userSystemId).order('entry_date', { ascending: false }).limit(14);
-  return data || [];
-}
-
-async function loadFullHistory(userSystemId){
-  const { data } = await supabase.from('daily_entries').select('*').eq('user_system_id', userSystemId).order('entry_date', { ascending: false }).limit(366);
-  return data || [];
-}
-
-// --- Daily report: analyzes recent check-in data and reports back what's working / what to change ---
-const MIN_DAYS_FOR_INSIGHT = 2;
-
-function setInsightBody(html, cls){
-  const body = el('#insightBody');
-  body.className = 'insight-body' + (cls ? ' ' + cls : '');
-  body.innerHTML = html;
-}
-
-async function ensureDailyInsight(userSystemId, forceRegenerate){
-  const card = el('#insightCard');
-  card.style.display = 'block';
-  el('#regenInsightBtn').style.display = 'none';
-
-  const today = todayStr();
-
-  if(!forceRegenerate){
-    const { data: existing } = await supabase.from('daily_insights').select('*')
-      .eq('user_system_id', userSystemId).eq('insight_date', today).maybeSingle();
-    if(existing){
-      setInsightBody(escapeHtml(existing.content));
-      el('#regenInsightBtn').style.display = 'inline';
-      return;
-    }
-  }
-
-  const history = await loadFullHistory(userSystemId);
-  if(history.length < MIN_DAYS_FOR_INSIGHT){
-    setInsightBody(`Check in for a couple more days and this'll start spotting real patterns in what's working and what isn't.`, 'muted');
-    return;
-  }
-
-  setInsightBody('Reading through your last few days…', 'loading');
-
-  try{
-    const content = await generateInsightText(state.anchors, history);
-    await supabase.from('daily_insights').upsert(
-      { user_system_id: userSystemId, insight_date: today, content },
-      { onConflict: 'user_system_id,insight_date' }
-    );
-    setInsightBody(escapeHtml(content));
-    el('#regenInsightBtn').style.display = 'inline';
-  }catch(err){
-    console.error(err);
-    setInsightBody('Could not generate a report right now. Try again in a bit.', 'muted');
-  }
-}
-
-async function generateInsightText(anchors, historyRows){
-  const itemLabelById = {};
-  anchors.forEach(a => a.items.forEach(it => { itemLabelById[it.id] = `${a.name}: ${it.label}`; }));
-
-  const historySummary = historyRows.slice(0, 21).map(row => {
-    const payload = row.payload || { items: {} };
-    const checked = Object.entries(payload.items || {})
-      .filter(([, v]) => v)
-      .map(([id]) => itemLabelById[id])
-      .filter(Boolean);
-    return `${row.entry_date} — score ${row.score}/10 — completed: ${checked.length ? checked.join('; ') : 'none'}`;
-  }).join('\n');
-
-  const anchorSummary = anchors.map(a => `${a.name} (trigger: ${a.trigger_text || 'n/a'}) — items: ${a.items.map(i=>i.label).join(', ') || 'none'}`).join('\n');
-
-  const prompt = `You analyze personal daily-habit tracking data and write a short, honest daily report.
-
-The person's system has these anchors:
-${anchorSummary}
-
-Their check-in history (most recent first):
-${historySummary}
-
-Write a short report (3-5 sentences, no headers, no bullet points, plain text only) that:
-- Names one real pattern you can see in the data (e.g. a specific anchor or day of week that's consistently weak or strong)
-- Gives one concrete, specific suggestion for what to change or try next
-- Is warm but direct — no generic encouragement, no fluff, ground everything in what the data actually shows
-- Does not just restate the scores back at them
-
-Respond with only the report text, nothing else.`;
-
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 300,
-      messages: [{ role: 'user', content: prompt }]
-    })
-  });
-  const data = await response.json();
-  const textBlock = (data.content || []).find(b => b.type === 'text');
-  if(!textBlock) throw new Error('No text in response');
-  return textBlock.text.trim();
-}
-
-function totalItemCount(){ return state.anchors.reduce((sum,a) => sum + a.items.length, 0); }
-function checkedItemCount(){ return Object.values(state.payload.items || {}).filter(Boolean).length; }
-function computeScore(){ const total = totalItemCount(); if(total===0) return 0; return Math.round(10 * checkedItemCount() / total); }
-
-function renderScore(){
-  const score = computeScore();
-  el('#scoreLabel').textContent = `${score} / 10`;
-  renderDayArc(score);
-}
-
-function renderDayArc(score){
-  const container = el('#dayArcSvg');
-  if(!container) return;
-  const n = state.anchors.length;
-  const cx = 200, cy = 118, r = 96;
-  const pointAt = (deg) => {
-    const rad = deg * Math.PI / 180;
-    return { x: cx + r * Math.cos(rad), y: cy - r * Math.sin(rad) };
-  };
-  const start = pointAt(180), end = pointAt(0);
-
-  let dotsSvg = '';
-  for(let i=0;i<n;i++){
-    const t = n === 1 ? 0.5 : i / (n - 1);
-    const deg = 180 - t * 180;
-    const p = pointAt(deg);
-    const anchor = state.anchors[i];
-    const itemsChecked = anchor.items.filter(it => state.payload.items[it.id]).length;
-    const complete = anchor.items.length > 0 && itemsChecked === anchor.items.length;
-    dotsSvg += `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="6.5" class="arc-dot${complete ? ' complete' : ''}" />`;
-  }
-
-  const frac = Math.max(0, Math.min(1, score / 10));
-  const sunDeg = 180 - frac * 180;
-  const sunP = pointAt(sunDeg);
-
-  container.innerHTML = `
-    <svg viewBox="0 0 400 140" class="day-arc-svg">
-      <defs>
-        <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#7E9B80" />
-          <stop offset="55%" stop-color="#E2A23A" />
-          <stop offset="100%" stop-color="#E07856" />
-        </linearGradient>
-      </defs>
-      <path d="M ${start.x.toFixed(1)} ${start.y.toFixed(1)} A ${r} ${r} 0 0 1 ${end.x.toFixed(1)} ${end.y.toFixed(1)}" class="arc-track" />
-      ${n > 0 ? `<path d="M ${start.x.toFixed(1)} ${start.y.toFixed(1)} A ${r} ${r} 0 0 1 ${sunP.x.toFixed(1)} ${sunP.y.toFixed(1)}" class="arc-progress" />` : ''}
-      ${dotsSvg}
-      <circle cx="${sunP.x.toFixed(1)}" cy="${sunP.y.toFixed(1)}" r="8" class="arc-sun" />
-    </svg>
-  `;
-}
-
-function renderStreak(rows){
-  const row = el('#streakRow'); row.innerHTML = '';
-  const byDate = {}; rows.forEach(r => byDate[r.entry_date] = r.score);
-  const days = [];
-  for(let i=13;i>=0;i--){ const d = new Date(); d.setDate(d.getDate()-i); days.push(d.toISOString().slice(0,10)); }
-  days.forEach(key => {
-    const score = byDate[key];
-    let level = 0;
-    if(score !== undefined){ level = score>=9?4 : score>=6?3 : score>=3?2 : 1; }
-    const div = document.createElement('div');
-    div.className = 'streak-day'; div.dataset.level = level;
-    div.title = key + (score!==undefined ? ` — ${score}/10` : ' — no entry');
-    row.appendChild(div);
-  });
-  el('#streakStart').textContent = new Date(days[0]).toLocaleDateString('en-US',{month:'short', day:'numeric'}).toUpperCase();
-}
-
-function renderHistory(rows){
-  const list = el('#historyList');
-  list.innerHTML = '';
-
-  if(!rows.length){
-    list.innerHTML = '<div class="history-empty">No entries yet. Check off your first anchor to start building history.</div>';
-    return;
-  }
-
-  // flat lookup: item/field id -> { label, anchorName } using the current anchor structure
-  const itemMap = {}, fieldMap = {};
-  state.anchors.forEach(a => {
-    a.items.forEach(it => { itemMap[it.id] = { label: it.label, anchorName: a.name }; });
-    a.fields.forEach(f => { fieldMap[f.id] = { label: f.label, anchorName: a.name }; });
-  });
-
-  rows.forEach(entry => {
-    const d = new Date(entry.entry_date + 'T00:00:00');
-    const dow = d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
-    const dateLabel = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    const score = entry.score || 0;
-    const scoreClass = score >= 8 ? 'high' : score >= 4 ? 'mid' : '';
-
-    const row = document.createElement('div');
-    row.className = 'history-row';
-
-    const head = document.createElement('div');
-    head.className = 'history-row-head';
-    head.innerHTML = `
-      <div class="history-date"><span class="dow">${dow}</span>${escapeHtml(dateLabel)}</div>
-      <div class="history-score ${scoreClass}">${score} / 10</div>
-    `;
-    head.addEventListener('click', () => row.classList.toggle('open'));
-    row.appendChild(head);
-
-    const detail = document.createElement('div');
-    detail.className = 'history-detail';
-
-    const payload = entry.payload || { items: {}, fields: {} };
-    const checkedByAnchor = {};
-    Object.entries(payload.items || {}).forEach(([itemId, checked]) => {
-      const meta = itemMap[itemId];
-      if(!meta) return;
-      if(!checkedByAnchor[meta.anchorName]) checkedByAnchor[meta.anchorName] = [];
-      checkedByAnchor[meta.anchorName].push({ label: meta.label, checked: !!checked });
-    });
-
-    const fieldsByAnchor = {};
-    Object.entries(payload.fields || {}).forEach(([fieldId, value]) => {
-      if(!value) return;
-      const meta = fieldMap[fieldId];
-      if(!meta) return;
-      if(!fieldsByAnchor[meta.anchorName]) fieldsByAnchor[meta.anchorName] = [];
-      fieldsByAnchor[meta.anchorName].push({ label: meta.label, value });
-    });
-
-    const anchorNames = new Set([...Object.keys(checkedByAnchor), ...Object.keys(fieldsByAnchor)]);
-    if(anchorNames.size === 0){
-      detail.innerHTML = '<div class="history-empty" style="padding:14px 0;">No detail recorded for this day.</div>';
-    } else {
-      anchorNames.forEach(name => {
-        const block = document.createElement('div');
-        block.className = 'history-anchor-block';
-        let html = `<h4>${escapeHtml(name)}</h4>`;
-        (checkedByAnchor[name] || []).forEach(it => {
-          html += `<div class="history-item-row${it.checked ? ' done' : ''}"><span class="tick">${it.checked ? '✓' : '·'}</span><span>${escapeHtml(it.label)}</span></div>`;
-        });
-        (fieldsByAnchor[name] || []).forEach(f => {
-          html += `<div class="history-field"><b>${escapeHtml(f.label)}:</b> ${escapeHtml(f.value)}</div>`;
-        });
-        block.innerHTML = html;
-        detail.appendChild(block);
-      });
-    }
-
-    row.appendChild(detail);
-    list.appendChild(row);
-  });
-}
-
-function flagSave(){ saveFlag.classList.add('show'); clearTimeout(flagSave._t); flagSave._t = setTimeout(()=> saveFlag.classList.remove('show'), 1200); }
-
-async function persistEntry(){
-  const score = computeScore();
-  if(state.entryId){
-    await supabase.from('daily_entries').update({ payload: state.payload, score, updated_at: new Date().toISOString() }).eq('id', state.entryId);
-  } else {
-    const { data } = await supabase.from('daily_entries').insert({ user_id: state.userId, user_system_id: state.userSystemId, entry_date: todayStr(), payload: state.payload, score }).select().single();
-    if(data) state.entryId = data.id;
-  }
-  flagSave();
-}
-function scheduleSave(){ clearTimeout(state.saveTimer); state.saveTimer = setTimeout(persistEntry, 500); }
-
-// --- Anchor editing ---
-function startEdit(anchorId){ state.editingId = anchorId; renderAnchors(); }
-function cancelEdit(){ state.editingId = null; renderAnchors(); }
-
-async function saveAnchorEdit(anchorId, draft){
-  // draft: { name, trigger_text, purpose, tolerance, items:[{id,label}], fields:[{id,label,field_type}] }
-  await supabase.from('user_anchors').update({
-    name: draft.name, trigger_text: draft.trigger_text, purpose: draft.purpose, tolerance: draft.tolerance
-  }).eq('id', anchorId);
-
-  const original = state.anchors.find(a => a.id === anchorId);
-
-  // items: reconcile
-  const keepIds = draft.items.filter(it => !it.id.startsWith('new_')).map(it => it.id);
-  const removedItems = original.items.filter(it => !keepIds.includes(it.id));
-  for(const it of removedItems){ await supabase.from('user_anchor_items').delete().eq('id', it.id); }
-  let pos = 1;
-  for(const it of draft.items){
-    if(it.id.startsWith('new_')){
-      if(it.label.trim()) await supabase.from('user_anchor_items').insert({ user_anchor_id: anchorId, position: pos, label: it.label.trim(), active: true });
-    } else {
-      await supabase.from('user_anchor_items').update({ label: it.label, position: pos }).eq('id', it.id);
-    }
-    pos++;
-  }
-
-  // fields: reconcile
-  const keepFieldIds = draft.fields.filter(f => !f.id.startsWith('new_')).map(f => f.id);
-  const removedFields = original.fields.filter(f => !keepFieldIds.includes(f.id));
-  for(const f of removedFields){ await supabase.from('user_anchor_fields').delete().eq('id', f.id); }
-  let fpos = 1;
-  for(const f of draft.fields){
-    if(f.id.startsWith('new_')){
-      if(f.label.trim()) await supabase.from('user_anchor_fields').insert({ user_anchor_id: anchorId, position: fpos, label: f.label.trim(), field_type: 'text' });
-    } else {
-      await supabase.from('user_anchor_fields').update({ label: f.label, position: fpos }).eq('id', f.id);
-    }
-    fpos++;
-  }
-
-  state.editingId = null;
-  state.anchors = await loadAnchors({ id: state.userSystemId, source_template_id: state.sourceTemplateId });
-  renderAnchors();
-  renderScore();
-  flagSave();
-}
-
-async function deleteAnchor(anchorId){
-  if(!confirm('Remove this anchor from your system? Its checklist and notes go with it.')) return;
-  await supabase.from('user_anchors').delete().eq('id', anchorId);
-  state.anchors = state.anchors.filter(a => a.id !== anchorId);
-  renderAnchors();
-  renderScore();
-  flagSave();
-}
-
-async function addNewAnchor(){
-  const nextPos = state.anchors.length ? Math.max(...state.anchors.map(a=>a.position)) + 1 : 1;
-  const { data: ua } = await supabase.from('user_anchors').insert({
-    user_system_id: state.userSystemId, position: nextPos, name: 'New Anchor',
-    trigger_text: 'Something you already do daily.', purpose: '', tolerance: ''
-  }).select().single();
-  state.anchors.push({ id: ua.id, position: ua.position, name: ua.name, trigger_text: ua.trigger_text, purpose: '', tolerance: '', signal_text: '', items: [], fields: [] });
-  state.editingId = ua.id;
-  renderAnchors();
-}
-
-function renderEditPanel(anchor){
-  const wrap = document.createElement('div');
-  wrap.className = 'edit-panel';
-
-  wrap.innerHTML = `
-    <div class="edit-row"><label>Anchor name</label><input type="text" data-f="name" value="${escapeHtml(anchor.name)}" /></div>
-    <div class="edit-row"><label>What it happens after</label><input type="text" data-f="trigger_text" value="${escapeHtml(anchor.trigger_text||'')}" /></div>
-    <div class="edit-row"><label>Why it matters</label><textarea data-f="purpose" rows="2">${escapeHtml(anchor.purpose||'')}</textarea></div>
-    <div class="edit-row"><label>Minimum that still counts</label><textarea data-f="tolerance" rows="2">${escapeHtml(anchor.tolerance||'')}</textarea></div>
-    <div class="edit-section-title">Checklist items</div>
-    <div class="edit-items"></div>
-    <button type="button" class="btn small edit-add" data-add="item">+ Add item</button>
-    <div class="edit-section-title">Custom fields</div>
-    <div class="edit-fields"></div>
-    <button type="button" class="btn small edit-add" data-add="field">+ Add field</button>
-    <div class="edit-actions">
-      <button type="button" class="btn danger small" data-act="delete">Delete anchor</button>
-      <span style="flex:1"></span>
-      <button type="button" class="btn small" data-act="cancel">Cancel</button>
-      <button type="button" class="btn primary small" data-act="save">Save</button>
-    </div>
-  `;
-
-  const draft = {
-    items: anchor.items.map(it => ({ id: it.id, label: it.label })),
-    fields: anchor.fields.map(f => ({ id: f.id, label: f.label, field_type: f.field_type }))
-  };
-
-  const itemsList = wrap.querySelector('.edit-items');
-  const fieldsList = wrap.querySelector('.edit-fields');
-
-  function renderItemRows(){
-    itemsList.innerHTML = '';
-    draft.items.forEach((it, idx) => {
-      const row = document.createElement('div');
-      row.className = 'edit-list-row';
-      row.innerHTML = `<input type="text" value="${escapeHtml(it.label)}" placeholder="Checklist item" /><button type="button" class="x">×</button>`;
-      row.querySelector('input').addEventListener('input', e => { draft.items[idx].label = e.target.value; });
-      row.querySelector('.x').addEventListener('click', () => { draft.items.splice(idx,1); renderItemRows(); });
-      itemsList.appendChild(row);
-    });
-  }
-  function renderFieldRows(){
-    fieldsList.innerHTML = '';
-    draft.fields.forEach((f, idx) => {
-      const row = document.createElement('div');
-      row.className = 'edit-list-row';
-      row.innerHTML = `<input type="text" value="${escapeHtml(f.label)}" placeholder="Field label (e.g. Takeaway)" /><button type="button" class="x">×</button>`;
-      row.querySelector('input').addEventListener('input', e => { draft.fields[idx].label = e.target.value; });
-      row.querySelector('.x').addEventListener('click', () => { draft.fields.splice(idx,1); renderFieldRows(); });
-      fieldsList.appendChild(row);
-    });
-  }
-  renderItemRows(); renderFieldRows();
-
-  wrap.querySelector('[data-add="item"]').addEventListener('click', () => { draft.items.push({ id: uid(), label: '' }); renderItemRows(); });
-  wrap.querySelector('[data-add="field"]').addEventListener('click', () => { draft.fields.push({ id: uid(), label: '', field_type: 'text' }); renderFieldRows(); });
-
-  wrap.querySelector('[data-act="cancel"]').addEventListener('click', cancelEdit);
-  wrap.querySelector('[data-act="delete"]').addEventListener('click', () => deleteAnchor(anchor.id));
-  wrap.querySelector('[data-act="save"]').addEventListener('click', () => {
-    const fd = {
-      name: wrap.querySelector('[data-f="name"]').value.trim() || 'Untitled Anchor',
-      trigger_text: wrap.querySelector('[data-f="trigger_text"]').value.trim(),
-      purpose: wrap.querySelector('[data-f="purpose"]').value.trim(),
-      tolerance: wrap.querySelector('[data-f="tolerance"]').value.trim(),
-      items: draft.items.filter(it => it.label.trim().length),
-      fields: draft.fields.filter(f => f.label.trim().length),
-    };
-    saveAnchorEdit(anchor.id, fd);
-  });
-
-  return wrap;
-}
-
-// --- Research facts: honest, sourced context for why each kind of anchor helps ---
-const RESEARCH_FACTS = {
-  morning: 'Mild dehydration, as little as <b>1 to 2%</b> of body weight, measurably hurts concentration, memory, and mood, so a full glass of water genuinely helps. One honest caveat: research hasn\u2019t found morning specifically to be more powerful than any other time, it\u2019s just an easy moment to remember it.',
-  movement: 'A 2023 Columbia University study found that a <b>5 minute walk every 30 minutes</b> lowered blood sugar spikes by <b>58%</b> compared to sitting all day. Short, frequent movement breaks have also been shown to improve blood flow and sharpen focus more than one long session.',
-  focus: '<b>Little and often beats occasional and long.</b> Research on spaced learning consistently shows short daily sessions build retention better than binge sessions, even when the total time spent is the same.',
-  evening: 'A Baylor University sleep study (Scullin et al., 2018) found that people who spent just <b>5 minutes writing before bed</b> fell asleep faster, and a to-do list format worked better than writing about the day\u2019s completed tasks.',
-};
-
-function detectAnchorCategory(anchor){
-  const n = (anchor.name || '').toLowerCase() + ' ' + (anchor.trigger_text || '').toLowerCase();
-  if(n.includes('morning') || n.includes('coffee') || n.includes('wake') || n.includes('alarm')) return 'morning';
-  if(n.includes('movement') || n.includes('walk') || n.includes('workout') || n.includes('stretch') || n.includes('move')) return 'movement';
-  if(n.includes('focus') || n.includes('input') || n.includes('read') || n.includes('learn')) return 'focus';
-  if(n.includes('evening') || n.includes('shutdown') || n.includes('night') || n.includes('bed') || n.includes('tea')) return 'evening';
-  return null;
-}
-
-const ANCHOR_ICONS = {
-  morning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>',
-  movement: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2 -4 4 -4 6 0s4 4 6 0s4 -4 6 0"/><path d="M2 17c2 -4 4 -4 6 0s4 4 6 0s4 -4 6 0" opacity="0.5"/></svg>',
-  focus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="6.2" opacity="0.6"/><circle cx="12" cy="12" r="9.6" opacity="0.3"/></svg>',
-  evening: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/><circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" stroke="none"/></svg>',
-};
-
-function renderAnchors(){
-  anchorsRoot.innerHTML = '<div class="rail-line"></div>';
-  if(!state.anchors.length){
-    const empty = document.createElement('div');
-    empty.className = 'status';
-    empty.textContent = 'No anchors yet. Add one below to start building your system.';
-    anchorsRoot.appendChild(empty);
-  }
-  state.anchors.forEach((anchor, idx) => {
-    const itemsChecked = anchor.items.filter(it => state.payload.items[it.id]).length;
-    const complete = anchor.items.length > 0 && itemsChecked === anchor.items.length;
-
-    const wrap = document.createElement('div');
-    wrap.className = 'anchor' + (complete ? ' complete' : '');
-
-    const node = document.createElement('div');
-    node.className = 'node';
-    const nodeCategory = detectAnchorCategory(anchor);
-    node.innerHTML = nodeCategory && ANCHOR_ICONS[nodeCategory] ? ANCHOR_ICONS[nodeCategory] : String(idx+1).padStart(2,'0');
-    wrap.appendChild(node);
-
-    const card = document.createElement('div');
-    card.className = 'card';
-
-    if(state.editingId === anchor.id){
-      card.appendChild(renderEditPanel(anchor));
-      wrap.appendChild(card);
-      anchorsRoot.appendChild(wrap);
-      return;
-    }
-
-    const head = document.createElement('div');
-    head.className = 'card-head';
-    head.innerHTML = `
-      <div style="flex:1">
-        <div class="trigger">${escapeHtml(anchor.trigger_text || '')}</div>
-        <h3 class="aname">${escapeHtml(anchor.name)}</h3>
-        <p class="purpose">${escapeHtml(anchor.purpose || '')}</p>
+function renderResults() {
+  const track = state.track;
+  const t = TRACKS[track];
+  const score = scoreAnswers(state.answers);
+  const sorted = Object.entries(score).sort((a, b) => b[1] - a[1]);
+  const maxScore = sorted[0][1] || 1;
+  const arcs = sorted.map(([key, val]) => `
+    <div style="text-align:center">
+      ${arcSVG((val / maxScore) * 100, TRACKS[key].color, 88, 7)}
+      <div style="margin-top:8px;font-size:13px;color:${COLORS.muted};letter-spacing:.5px">${TRACKS[key].name.toUpperCase()}</div>
+    </div>`).join("");
+  return `
+    <div class="center">
+      <div class="eyebrow" style="color:${t.color}">YOUR STARTING TRACK</div>
+      <h1 class="h1" style="color:${t.color}">${t.name}</h1>
+      <p class="lede">${t.tagline}</p>
+      <div style="display:flex;gap:24px;margin:32px 0;flex-wrap:wrap;justify-content:center">${arcs}</div>
+      <div class="panel" style="border-color:${t.color}55">
+        <div style="font-size:13px;color:${COLORS.muted};margin-bottom:6px">DAILY CHECK-IN</div>
+        <div style="font-size:15px">${t.checkin}</div>
       </div>
-      <button class="btn small" data-edit="${anchor.id}">Edit</button>
-    `;
-    card.appendChild(head);
-    head.querySelector('[data-edit]').addEventListener('click', () => startEdit(anchor.id));
-
-    const category = detectAnchorCategory(anchor);
-    if(category && RESEARCH_FACTS[category]){
-      const fact = document.createElement('div');
-      fact.className = 'research-fact';
-      fact.innerHTML = `<div class="rf-label">🧪 Why this works</div>${RESEARCH_FACTS[category]}`;
-      card.appendChild(fact);
-    }
-
-    const itemsDiv = document.createElement('div');
-    itemsDiv.className = 'items';
-    anchor.items.forEach(it => {
-      const checked = !!state.payload.items[it.id];
-      const row = document.createElement('div');
-      row.className = 'item' + (checked ? ' checked' : '');
-      row.innerHTML = `
-        <div class="check"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 11.5L13 4.5" stroke="#FFFDF8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div class="item-label">${escapeHtml(it.label)}</div>
-      `;
-      row.addEventListener('click', () => {
-        state.payload.items[it.id] = !state.payload.items[it.id];
-        renderScore(); renderAnchors(); scheduleSave();
-      });
-      itemsDiv.appendChild(row);
-    });
-    card.appendChild(itemsDiv);
-
-    if(anchor.fields.length){
-      const fieldsDiv = document.createElement('div');
-      fieldsDiv.className = 'fields';
-      anchor.fields.forEach(f => {
-        const fd = document.createElement('div');
-        fd.className = 'field';
-        const val = (state.payload.fields && state.payload.fields[f.id]) || '';
-        fd.innerHTML = `<label class="field-label">${escapeHtml(f.label)}</label>`;
-        const input = document.createElement('input');
-        input.type = 'text'; input.placeholder = f.label; input.value = val;
-        input.addEventListener('input', (e) => {
-          if(!state.payload.fields) state.payload.fields = {};
-          state.payload.fields[f.id] = e.target.value;
-          scheduleSave();
-        });
-        fd.appendChild(input);
-        fieldsDiv.appendChild(fd);
-      });
-      card.appendChild(fieldsDiv);
-    }
-
-    if(anchor.tolerance){
-      const tol = document.createElement('div');
-      tol.className = 'tolerance';
-      tol.innerHTML = `<b>Still counts if:</b> ${escapeHtml(anchor.tolerance)}`;
-      card.appendChild(tol);
-    }
-    if(anchor.signal_text){
-      const sig = document.createElement('div');
-      sig.className = 'signal';
-      sig.textContent = '"' + anchor.signal_text + '"';
-      card.appendChild(sig);
-    }
-
-    wrap.appendChild(card);
-    anchorsRoot.appendChild(wrap);
-  });
+      <button class="primary-btn" style="background:${t.color};margin-top:32px" id="continueBtn">Start my ${t.name} track →</button>
+    </div>`;
 }
 
-// --- Build-your-own system flow ---
-const BUILD_QUESTIONS = [
-  {
-    key: 'q1', name: 'Morning Anchor',
-    purpose: 'Turn this moment into the load-bearing point the rest of your morning attaches to.',
-    tolerance: 'Do the smallest version rather than skip it. Even one item still counts.',
-    signal_text: "You feel like the day started with you in charge of it, not the phone.",
-    items: ['A full glass of water', 'Phone stays away for the first few minutes', 'Jot something down on paper before you move on'],
-    fields: [{ label: 'What you wrote', field_type: 'text' }],
-  },
-  {
-    key: 'q2', name: 'Movement Anchor',
-    purpose: 'Use motion you already have going to build in the stretching that keeps slipping.',
-    tolerance: 'Three minutes still counts. The system is showing up, not hitting a number.',
-    signal_text: 'The tightness you\u2019ve been ignoring starts to name itself. You can point at it.',
-    items: ['A few minutes of stretching or breathing', 'No phone, just music or silence'],
-    fields: [{ label: 'Tightest or best spot today', field_type: 'text' }],
-  },
-  {
-    key: 'q3', name: 'Focus Anchor',
-    purpose: 'Make sure what you take in during this block is chosen, not just whatever shows up.',
-    tolerance: 'Ten minutes still counts. Skipping means you owe yourself a double next time, no shame spiral.',
-    signal_text: 'You notice yourself thinking about it during the day, not just consuming and moving on.',
-    items: ['20–30 minutes on one thing, chosen ahead of time'],
-    fields: [{ label: 'Source', field_type: 'text' }, { label: 'Takeaway', field_type: 'text' }],
-  },
-  {
-    key: 'q4', name: 'Evening Anchor',
-    purpose: 'Close the day the way you opened it, on purpose.',
-    tolerance: 'The three-item review is the minimum. It takes about two minutes.',
-    signal_text: 'Sleep gets better because you\u2019re not walking from a screen straight into bed.',
-    items: ['Three-item review: what worked, what didn\u2019t, what tomorrow needs', 'Phone away for this moment'],
-    fields: [{ label: 'Worked', field_type: 'text' }, { label: "Didn't", field_type: 'text' }, { label: 'Tomorrow needs', field_type: 'text' }],
-  },
-];
+function renderDefine() {
+  const track = state.track;
+  const t = TRACKS[track];
 
-function showBuildView(){
-  setView('build');
-  el('#buildError').classList.remove('show');
-}
-function hideBuildView(){
-  setView(state.userSystemId ? 'main' : 'intro');
-}
-
-async function submitBuildForm(){
-  const answers = BUILD_QUESTIONS.map(q => el('#' + q.key).value.trim());
-  if(answers.some(a => a.length < 3)){
-    el('#buildError').classList.add('show');
-    return;
+  if (track === "energy") {
+    return `
+      <div class="center">
+        <div class="eyebrow" style="color:${t.color}">ONE LAST THING</div>
+        <h2 class="h2">What's a good night's sleep for you?</h2>
+        <p class="lede">Some people run well on 6.5 hours, others need 9. Your sleep score is measured against your own target, not a generic one.</p>
+        <div class="panel" style="margin-top:20px">
+          <div class="stepper-row">
+            <div style="font-size:14px">Sleep target</div>
+            <div style="display:flex;align-items:center;gap:14px">
+              <button class="stepper-btn" data-sleep-target-stepper data-dir="-1">−</button>
+              <div style="min-width:56px;text-align:center;font-size:15px;color:${t.color}">${state.sleepTargetDraft}h</div>
+              <button class="stepper-btn" data-sleep-target-stepper data-dir="1">+</button>
+            </div>
+          </div>
+        </div>
+        <button class="primary-btn" style="background:${t.color};margin-top:26px" id="defineContinueBtn">Continue →</button>
+      </div>`;
   }
-  const btn = el('#buildSubmitBtn');
-  btn.disabled = true; btn.textContent = 'Building…';
 
-  try{
-    await ensureProfile(state.userId);
-    // deactivate any currently active system(s) for this user
-    await supabase.from('user_systems').update({ active: false }).eq('user_id', state.userId).eq('active', true);
+  const prompt = track === "consistency" ? "What's the one habit you're building?" : "What's your grounding practice?";
+  const placeholder = track === "consistency"
+    ? "e.g. flossing, no phone after 9pm, 10 pages of reading"
+    : "e.g. one slow breath before meetings, a phone-free walk";
+  const inputStyle = `width:100%;background:${COLORS.panel};border:1px solid ${COLORS.line};border-radius:10px;color:${COLORS.text};font-family:var(--sans);font-size:15px;padding:14px 16px;`;
+  const fieldLabelStyle = `font-size:11px;letter-spacing:1px;text-transform:uppercase;color:${COLORS.muted};margin:18px 0 6px;text-align:left;`;
 
-    const { data: newSystem } = await supabase.from('user_systems').insert({
-      user_id: state.userId, source_template_id: null, name: 'My Anchors', active: true
-    }).select().single();
+  const examples = EXAMPLE_PRACTICES[track] || [];
+  const ideaHint = track === "presence"
+    ? "A good grounding practice is short (under a minute), doesn't need anything special, and you can actually remember to do it."
+    : "A good habit is small enough that skipping it feels harder to justify than doing it.";
+  const chipsHTML = state.showIdeas
+    ? `<div class="chip-group">${examples.map((ex) => `<button class="chip" data-idea-chip="${ex.replace(/"/g, "&quot;")}">${ex}</button>`).join("")}</div>`
+    : "";
 
-    for(let i=0;i<BUILD_QUESTIONS.length;i++){
-      const q = BUILD_QUESTIONS[i];
-      const { data: ua } = await supabase.from('user_anchors').insert({
-        user_system_id: newSystem.id, position: i+1, name: q.name,
-        trigger_text: answers[i], purpose: q.purpose,
-        tolerance: q.tolerance, signal_text: q.signal_text
-      }).select().single();
+  return `
+    <div class="center">
+      <div class="eyebrow" style="color:${t.color}">ONE LAST THING</div>
+      <h2 class="h2">${prompt}</h2>
+      <p class="lede">This shows up in your daily check-ins so they're specific to you, not generic.</p>
+      <input id="habitInput" type="text" placeholder="${placeholder}" value="${state.habitDraft || ""}" style="${inputStyle}margin-top:20px" />
+      <button class="idea-toggle" id="ideaToggleBtn">${state.showIdeas ? "Hide ideas" : "Not sure? Need an idea →"}</button>
+      ${state.showIdeas ? `<p class="lede" style="font-size:12.5px;margin:8px 0 0;text-align:left">${ideaHint}</p>` : ""}
+      ${chipsHTML}
 
-      await supabase.from('user_anchor_items').insert(
-        q.items.map((label, idx) => ({ user_anchor_id: ua.id, position: idx+1, label, active: true }))
-      );
-      if(q.fields.length){
-        await supabase.from('user_anchor_fields').insert(
-          q.fields.map((f, idx) => ({ user_anchor_id: ua.id, position: idx+1, label: f.label, field_type: f.field_type }))
-        );
-      }
-    }
+      <div style="width:100%">
+        <div style="${fieldLabelStyle}">Attach it to something (optional)</div>
+        <input id="triggerInput" type="text" placeholder="e.g. right after my morning coffee" value="${state.habitTriggerDraft || ""}" style="${inputStyle}" />
+        <p class="lede" style="font-size:12.5px;margin:6px 0 0;text-align:left">Habits stick better tied to something you already do daily than to willpower alone.</p>
+      </div>
 
-    await loadIntoMain(newSystem);
-  }catch(err){
-    console.error(err);
-    el('#buildError').textContent = 'Something went wrong building your system. Try again.';
-    el('#buildError').classList.add('show');
-  }finally{
-    btn.disabled = false; btn.textContent = 'Build my system';
-  }
+      <button class="primary-btn" style="background:${t.color};margin-top:26px" id="defineContinueBtn">Continue →</button>
+    </div>`;
 }
 
-async function enterDefaultSystem(){
-  const btn = el('#enterDefaultBtn');
-  btn.disabled = true; btn.textContent = 'Loading…';
-  try{
-    const system = await activateDefaultSystem(state.userId);
-    await loadIntoMain(system);
-  }catch(err){
-    console.error(err);
-    showAuthError(err);
-  }finally{
-    btn.disabled = false; btn.textContent = "See the example →";
-  }
+function renderDashboard() {
+  const track = state.track;
+  const t = TRACKS[track];
+  const days = currentDays();
+  const rolling = rollingAverage(days);
+  const graduated = rolling >= 80;
+  const dipping = rolling < 80;
+  const weakestLever = dipping ? findWeakestLever(track, days) : null;
+  const leverLabel = weakestLever ? t.leverLabels[weakestLever] : null;
+
+  const doneKeys = state.todayLog?.moment_timestamps ? Object.keys(state.todayLog.moment_timestamps) : [];
+  const totalMoments = t.moments.length;
+  const doneCount = doneKeys.filter((k) => t.moments.some((m) => m.key === k)).length;
+  const checkinBtnLabel = state.todayLog === undefined ? "…"
+    : doneCount === 0 ? "Log today's first moment →"
+    : doneCount < totalMoments ? `Continue today (${doneCount}/${totalMoments}) →`
+    : "All logged today ✓ — review";
+  const habitNote = state.habitLabel
+    ? `<div class="panel" style="margin:14px 0;text-align:left"><div style="font-size:11px;color:${COLORS.muted};letter-spacing:1px;margin-bottom:4px">WHAT YOU'RE BUILDING</div><div style="font-size:14px">${state.habitLabel}</div></div>`
+    : track === "energy"
+    ? `<div class="panel" style="margin:14px 0;text-align:left"><div style="font-size:11px;color:${COLORS.muted};letter-spacing:1px;margin-bottom:4px">YOUR SLEEP TARGET</div><div style="font-size:14px">${state.sleepTarget}h a night</div></div>`
+    : "";
+
+  return `
+    <div class="center">
+      <div class="eyebrow" style="color:${t.color}">${t.name.toUpperCase()} · DAY 14 · 7-DAY ROLLING AVERAGE</div>
+      ${arcSVG(rolling, t.color, 150, 12)}
+      <div style="margin-top:10px;font-size:14px;color:${COLORS.muted}">${t.metricLabel}</div>
+      <div style="margin-top:24px">${sparklineSVG(days, t.color, 80)}</div>
+      <div style="font-size:12px;color:${COLORS.muted};margin-top:6px">last 14 days · dashed line marks the 80% steady-state threshold</div>
+
+      ${habitNote}
+
+      <button class="primary-btn" style="background:${t.color};margin-top:8px;opacity:${state.todayLog === undefined ? 0.6 : 1}" id="checkinBtn" ${state.todayLog === undefined ? "disabled" : ""}>${checkinBtnLabel}</button>
+
+      <div style="font-size:11px;color:${COLORS.muted};margin-top:26px;letter-spacing:1px">DEMO · PREVIEW TREND BEHAVIOR</div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="small-btn" id="simDip">simulate: dipping</button>
+        <button class="small-btn" id="simSteady">simulate: steady</button>
+        <button class="small-btn" id="simRise">simulate: rising</button>
+      </div>
+      <div style="margin-top:22px"></div>
+
+      ${graduated ? `
+        <div class="panel" style="border-color:${t.color};text-align:center">
+          <div style="font-size:15px;margin-bottom:4px">Holding at <strong style="color:${t.color}">${rolling}%</strong> — you're in steady state.</div>
+          <div style="font-size:13px;color:${COLORS.muted};margin-bottom:14px">That's the goal. Quiet win, no action needed today.</div>
+          <button class="primary-btn" style="background:${t.color}" id="requizBtn">See where I could grow next →</button>
+        </div>` : ""}
+
+      ${dipping && state.citation ? `
+        <div class="panel" style="border-color:${COLORS.warn}66;text-align:left">
+          <div style="font-size:12px;color:${COLORS.warn};letter-spacing:1px;margin-bottom:8px">YOUR ${leverLabel.toUpperCase()} IS DRAGGING THIS WEEK'S ${rolling}%</div>
+          <div style="font-size:14px;line-height:1.6;margin-bottom:14px">${state.citation}</div>
+          <button class="ghost-btn" id="retakeBtn">Retake the quiz now</button>
+        </div>` : ""}
+    </div>`;
 }
 
-async function init(){
-  el('#todayLabel').textContent = fmtDateLabel();
-  el('#addAnchorBtn').addEventListener('click', addNewAnchor);
-  el('#switchSystemBtn').addEventListener('click', () => {
-    if(state.userSystemId){
-      el('#continueName').textContent = el('#systemName').textContent;
-      el('#continueBanner').style.display = 'block';
-      el('#continueBtn').onclick = () => setView('main');
-    }
-    setView('intro');
-  });
-  el('#enterDefaultBtn').addEventListener('click', enterDefaultSystem);
-  el('#enterBuildBtn').addEventListener('click', showBuildView);
-  el('#buildCancelBtn').addEventListener('click', hideBuildView);
-  el('#buildSubmitBtn').addEventListener('click', submitBuildForm);
-  document.querySelectorAll('.idea-toggle').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const target = el('#' + btn.dataset.target);
-      const showing = target.style.display !== 'none';
-      target.style.display = showing ? 'none' : 'flex';
-      btn.textContent = showing ? 'Need an idea?' : 'Hide ideas';
-    });
-  });
-  document.querySelectorAll('.example-chips').forEach(group => {
-    const targetId = group.dataset.target;
-    group.querySelectorAll('.chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        el('#' + targetId).value = chip.textContent;
-        el('#' + targetId).focus();
-      });
-    });
-  });
-  el('#viewHistoryBtn').addEventListener('click', async () => {
-    setView('history');
-    el('#historyList').innerHTML = '<div class="history-empty">Loading…</div>';
-    renderHistory(await loadFullHistory(state.userSystemId));
-  });
-  el('#historyBackBtn').addEventListener('click', () => setView('main'));
-  el('#regenInsightBtn').addEventListener('click', () => ensureDailyInsight(state.userSystemId, true));
-
-  try{
-    const session = await ensureSession();
-    state.userId = session.user.id;
-
-    const { data: existingSystem } = await supabase
-      .from('user_systems').select('*').eq('user_id', state.userId).eq('active', true).maybeSingle();
-
-    setView('intro');
-
-    if(existingSystem){
-      el('#continueName').textContent = existingSystem.name;
-      el('#continueBanner').style.display = 'block';
-      el('#continueBtn').onclick = () => loadIntoMain(existingSystem);
-    }
-  }catch(err){
-    console.error(err);
-    showAuthError(err);
-    setView('intro');
-    anchorsRoot.innerHTML = '<div class="rail-line"></div><div class="status">Waiting on setup above before your system can load.</div>';
-  }
+function stepperMomentHTML(key, value, min, max, step, color) {
+  return `
+    <div class="stepper-row">
+      <div style="font-size:13px;color:${COLORS.muted}">Value</div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <button class="stepper-btn" data-today-stepper="${key}" data-dir="-1" data-step="${step}" data-min="${min}" data-max="${max}">−</button>
+        <div style="min-width:42px;text-align:center;font-size:15px;color:${color}">${value}</div>
+        <button class="stepper-btn" data-today-stepper="${key}" data-dir="1" data-step="${step}" data-min="${min}" data-max="${max}">+</button>
+      </div>
+    </div>`;
+}
+function toggleMomentHTML(key, value, color) {
+  return `
+    <div style="display:flex;gap:8px">
+      <button class="toggle-btn" data-today-toggle="${key}" data-value="true" style="${value ? `border-color:${color};color:${color}` : ""}">Yes</button>
+      <button class="toggle-btn" data-today-toggle="${key}" data-value="false" style="${!value ? `border-color:${color};color:${color}` : ""}">No</button>
+    </div>`;
 }
 
-init();
+function renderToday() {
+  const track = state.track;
+  const t = TRACKS[track];
 
-if('serviceWorker' in navigator){
+  if (state.todayLog === undefined) {
+    return `
+      <div class="center">
+        <div class="eyebrow" style="color:${t.color}">${t.name.toUpperCase()} · TODAY</div>
+        <p class="lede">Loading…</p>
+      </div>`;
+  }
+
+  const doneTimestamps = state.todayLog?.moment_timestamps || {};
+  const savedLevers = state.todayLog?.levers || {};
+
+  const cards = t.moments.map((m) => {
+    const isDone = !!doneTimestamps[m.key];
+    const isEditing = state.expandedMoment === m.key || !isDone;
+    const label = momentLabel(track, m, state.habitLabel);
+    let valueSummary = "";
+    if (isDone && !isEditing) {
+      const v = savedLevers[m.key];
+      valueSummary = m.type === "toggle" ? (v ? "Yes" : "No") : `${v}`;
+    }
+
+    // Personal guidance (trigger, sleep target) takes priority over
+    // the generic tip on the personalized moment.
+    let guidanceLine = m.guidance || "";
+    if (m.key === "completed" && state.habitTrigger) {
+      guidanceLine = `Attached to: ${state.habitTrigger}`;
+    }
+    if (m.key === "sleep_hours") {
+      guidanceLine = `Your target: ${state.sleepTarget}h — ${m.guidance}`;
+    }
+    const guidanceHTML = guidanceLine
+      ? `<div style="font-size:12px;color:${COLORS.muted};line-height:1.5;margin-top:6px">${guidanceLine}</div>` : "";
+
+    let body = "";
+    if (isEditing) {
+      const currentVal = state.todayValues[m.key];
+      body = m.type === "stepper"
+        ? stepperMomentHTML(m.key, currentVal, m.min, m.max, m.step, t.color)
+        : toggleMomentHTML(m.key, currentVal, t.color);
+      body += `<div style="margin-top:10px"><button class="ghost-btn" data-save-moment="${m.key}" style="border-color:${t.color};color:${t.color}">${isDone ? "Update" : "Log this"}</button></div>`;
+    }
+    const habitRefHTML = m.showsHabit && state.habitLabel
+      ? `<div style="font-size:13px;color:${t.color};margin-top:2px">→ ${state.habitLabel}</div>` : "";
+    return `
+      <div class="moment-card ${isDone ? "done" : ""}">
+        <div class="moment-head">
+          <div>
+            <div class="moment-time">${m.time}</div>
+            <div class="moment-label">${label}</div>
+            ${habitRefHTML}
+            ${guidanceHTML}
+            ${isDone && !isEditing ? `<div class="moment-value">Logged · ${valueSummary}</div>` : ""}
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            ${isDone && !isEditing ? `<button class="ghost-btn" data-edit-moment="${m.key}" style="padding:4px 10px;font-size:11px">Edit</button>` : ""}
+            <div class="moment-check">${isDone ? "✓" : ""}</div>
+          </div>
+        </div>
+        ${isEditing ? `<div class="moment-body">${body}</div>` : ""}
+      </div>`;
+  }).join("");
+
+  return `
+    <div class="center">
+      <div class="eyebrow" style="color:${t.color}">${t.name.toUpperCase()} · TODAY</div>
+      <h2 class="h2">Small wins, whenever they happen.</h2>
+      <p class="lede">Log each one as it happens through the day — no need to wait until tonight.</p>
+      <div class="moment-list" style="margin-top:16px">${cards}</div>
+      <button class="ghost-btn" style="margin-top:20px" id="backToDashboardBtn">Back to dashboard</button>
+    </div>`;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+ensureSession();
+render();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').catch((err) => console.warn('SW registration failed', err));
   });
