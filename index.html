@@ -126,6 +126,27 @@ async function ensureSession() {
   return data.user;
 }
 
+// Attaches an email to the CURRENT anonymous account rather than
+// creating a new one — same user id, so every track/log/assignment
+// already tied to that id stays fully intact. Supabase sends a
+// confirmation email; the account becomes permanent once it's clicked.
+async function linkEmailToAccount(email) {
+  const { error } = await supabase.auth.updateUser({ email });
+  return error;
+}
+
+// For returning on a different device: signs in to whatever account
+// this email was previously linked to (via the function above), and
+// that account's real id is what all its history is stored under.
+async function sendMagicLink(email) {
+  const redirectTo = window.location.origin + window.location.pathname;
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: redirectTo },
+  });
+  return error;
+}
+
 async function saveTrackAssignment(trackId, quizScores, habitInfo) {
   const user = await ensureSession();
   if (!user) return;
@@ -150,40 +171,33 @@ async function fetchCurrentAssignment(trackId) {
   return data;
 }
 
-// Demo-only: writes the simulated 14-day history so the "simulate"
-// buttons have something real to visualize trend behavior with,
-// without needing 14 real days of check-ins yet.
-async function persistDailyLogs(trackId, days) {
+async function fetchAnyCurrentAssignment() {
   const user = await ensureSession();
-  if (!user) return;
-  const rows = days.map((d, i) => {
-    const date = new Date();
-    date.setDate(date.getDate() - (days.length - 1 - i));
-    const { day, composite, ...levers } = d;
-    return {
-      user_id: user.id, track_id: trackId, log_date: date.toISOString().slice(0, 10),
-      levers, composite_score: composite,
-    };
-  });
-  await supabase.from('daily_logs').upsert(rows, { onConflict: 'user_id,track_id,log_date' });
+  if (!user) return null;
+  const { data, error } = await supabase.from('user_track_assignments')
+    .select('track_id, habit_label, habit_trigger, sleep_target_hours')
+    .eq('user_id', user.id).eq('is_current', true)
+    .order('assigned_at', { ascending: false }).limit(1).maybeSingle();
+  if (error) return null;
+  return data;
 }
 
-function scoreDay(track, values) {
-  if (track === 'energy') {
-    const target = state.sleepTarget || 8;
-    const sleepScore = Math.min(values.sleep_hours / target, 1) * 100;
-    const movedScore = values.moved ? 100 : 40;
-    const feelScore = (values.energy_score / 5) * 100;
-    return Math.round((sleepScore + movedScore + feelScore) / 3);
-  }
-  if (track === 'consistency') {
-    const completedScore = values.completed ? 100 : 20;
-    const streakScore = Math.min(values.streak / 10, 1) * 100;
-    return Math.round((completedScore + streakScore) / 2);
-  }
-  const feelScore = (values.presence_score / 5) * 100;
-  const distractionScore = Math.max(0, (10 - values.distraction_count) / 10) * 100;
-  return Math.round((feelScore + distractionScore) / 2);
+// Real check-in history for the dashboard's Arc/sparkline/rolling
+// average — replaces the old simulated demo data entirely. Returned
+// oldest-first so it lines up with how the sparkline expects days.
+async function fetchRecentLogs(trackId, limitDays = 14) {
+  const user = await ensureSession();
+  if (!user) return [];
+  const { data, error } = await supabase.from('daily_logs')
+    .select('log_date, levers, composite_score')
+    .eq('user_id', user.id).eq('track_id', trackId)
+    .order('log_date', { ascending: false })
+    .limit(limitDays);
+  if (error || !data) return [];
+  return data
+    .slice()
+    .reverse()
+    .map((d, i) => ({ ...(d.levers || {}), composite: d.composite_score ?? 0, log_date: d.log_date, day: i }));
 }
 
 async function fetchLatestLog(trackId) {
@@ -432,44 +446,46 @@ function activeQuestions(answers) {
   return base;
 }
 
-function makeDay(track, dayIndex, trend) {
-  const base = 78 + trend * dayIndex * 1.4;
-  const noise = (Math.sin(dayIndex * 1.7) * 6);
-  const composite = Math.max(30, Math.min(100, Math.round(base + noise)));
-  if (track === "energy") {
-    return { day: dayIndex, energy_score: Math.round(composite / 20),
-      sleep_hours: Math.round((composite / 100) * 3 + 5), moved: composite > 55, composite };
-  }
-  if (track === "consistency") {
-    return { day: dayIndex, completed: composite > 50,
-      streak: composite > 50 ? Math.max(1, Math.round(composite / 12)) : 0, composite };
-  }
-  return { day: dayIndex, presence_score: Math.round(composite / 20),
-    distraction_count: Math.max(0, Math.round((100 - composite) / 10)), composite };
-}
 function rollingAverage(days, windowSize = 7) {
   const w = days.slice(-windowSize);
+  if (w.length === 0) return null;
   return Math.round(w.reduce((a, d) => a + d.composite, 0) / w.length);
 }
+// Real check-in history can be sparse — someone might have logged
+// sleep but not gotten to their energy rating yet today, or skipped
+// a moment on a busy day. Only compare levers that actually have
+// data, and return null (rather than crashing on NaN) if none do.
 function findWeakestLever(track, days) {
   const window = days.slice(-7);
+  if (window.length === 0) return null;
+  function avgOf(key, isBoolean) {
+    const vals = window.map((d) => d[key]).filter((v) => v !== undefined && v !== null);
+    if (vals.length === 0) return null;
+    if (isBoolean) return vals.filter(Boolean).length / vals.length;
+    return vals.reduce((a, b) => a + b, 0) / vals.length;
+  }
+  const scores = {};
   if (track === "energy") {
-    const avgSleep = window.reduce((a, d) => a + d.sleep_hours, 0) / window.length;
-    const avgMoved = window.filter((d) => d.moved).length / window.length;
-    const avgScore = window.reduce((a, d) => a + d.energy_score, 0) / window.length;
-    const scores = { sleep_hours: avgSleep / 8, moved: avgMoved, energy_score: avgScore / 5 };
-    return Object.entries(scores).sort((a, b) => a[1] - b[1])[0][0];
+    const sleep = avgOf("sleep_hours", false);
+    if (sleep !== null) scores.sleep_hours = Math.min(sleep / (state.sleepTarget || 8), 1);
+    const moved = avgOf("moved", true);
+    if (moved !== null) scores.moved = moved;
+    const feel = avgOf("energy_score", false);
+    if (feel !== null) scores.energy_score = feel / 5;
+  } else if (track === "consistency") {
+    const completed = avgOf("completed", true);
+    if (completed !== null) scores.completed = completed;
+    const streak = avgOf("streak", false);
+    if (streak !== null) scores.streak = Math.min(streak / 10, 1);
+  } else {
+    const feel = avgOf("presence_score", false);
+    if (feel !== null) scores.presence_score = feel / 5;
+    const distraction = avgOf("distraction_count", false);
+    if (distraction !== null) scores.distraction_count = 1 - Math.min(distraction / 10, 1);
   }
-  if (track === "consistency") {
-    const avgCompleted = window.filter((d) => d.completed).length / window.length;
-    const avgStreak = window.reduce((a, d) => a + d.streak, 0) / window.length;
-    const scores = { completed: avgCompleted, streak: avgStreak / 10 };
-    return Object.entries(scores).sort((a, b) => a[1] - b[1])[0][0];
-  }
-  const avgScore = window.reduce((a, d) => a + d.presence_score, 0) / window.length;
-  const avgDistraction = window.reduce((a, d) => a + d.distraction_count, 0) / window.length;
-  const scores = { presence_score: avgScore / 5, distraction_count: 1 - avgDistraction / 10 };
-  return Object.entries(scores).sort((a, b) => a[1] - b[1])[0][0];
+  const entries = Object.entries(scores);
+  if (entries.length === 0) return null;
+  return entries.sort((a, b) => a[1] - b[1])[0][0];
 }
 
 const CITATION_LIBRARY = {
@@ -528,18 +544,21 @@ const el = (sel) => document.querySelector(sel);
 const root = document.getElementById("root");
 
 const state = {
-  screen: "welcome", step: 0, answers: [], track: null,
-  trendMode: 0, prevStreak: 0, todayLog: undefined,
+  screen: "boot", step: 0, answers: [], track: null,
+  recentLogs: undefined, prevStreak: 0, todayLog: undefined,
   citation: null, citationFetchedForLever: null,
   habitLabel: null, habitTrigger: null, sleepTarget: 8,
   habitDraft: "", habitTriggerDraft: "", sleepTargetDraft: 8, showIdeas: false,
   todayValues: {}, expandedMoment: null, saving: false,
+  userIsAnonymous: true,
+  saveEmailDraft: "", saveEmailStatus: null,
+  signinEmailDraft: "", signinStatus: null,
 };
 
 function resetApp() {
   Object.assign(state, {
     screen: "welcome", step: 0, answers: [], track: null,
-    trendMode: 0, prevStreak: 0, todayLog: undefined,
+    recentLogs: undefined, prevStreak: 0, todayLog: undefined,
     citation: null, citationFetchedForLever: null,
     habitLabel: null, habitTrigger: null, sleepTarget: 8,
     habitDraft: "", habitTriggerDraft: "", sleepTargetDraft: 8, showIdeas: false,
@@ -550,18 +569,25 @@ function resetApp() {
 
 function render() {
   let html = "";
-  if (state.screen === "welcome") html = renderWelcome();
+  if (state.screen === "boot") html = renderBoot();
+  else if (state.screen === "welcome") html = renderWelcome();
+  else if (state.screen === "signin") html = renderSignin();
   else if (state.screen === "quiz") html = renderQuiz();
   else if (state.screen === "results") html = renderResults();
   else if (state.screen === "define") html = renderDefine();
   else if (state.screen === "dashboard") html = renderDashboard();
   else if (state.screen === "today") html = renderToday();
 
+  const showResetLink = state.screen !== "welcome" && state.screen !== "boot" && state.screen !== "signin";
   root.innerHTML = `
     <div class="frame">${html}</div>
-    ${state.screen !== "welcome" ? '<div class="center"><button class="reset-link" id="resetLink">restart prototype</button></div>' : ""}
+    ${showResetLink ? '<div class="center"><button class="reset-link" id="resetLink">Retake the quiz / start a new track</button></div>' : ""}
   `;
   bindEvents();
+}
+
+function renderBoot() {
+  return `<div class="center"><p class="lede">Loading your account…</p></div>`;
 }
 
 function bindEvents() {
@@ -569,6 +595,27 @@ function bindEvents() {
 
   if (state.screen === "welcome") {
     el("#startBtn")?.addEventListener("click", () => { state.screen = "quiz"; state.step = 0; render(); });
+    el("#goToSigninBtn")?.addEventListener("click", () => {
+      state.screen = "signin";
+      state.signinEmailDraft = "";
+      state.signinStatus = null;
+      render();
+    });
+  }
+
+  if (state.screen === "signin") {
+    const input = el("#signinEmailInput");
+    input?.addEventListener("input", (e) => { state.signinEmailDraft = e.target.value; });
+    el("#sendMagicLinkBtn")?.addEventListener("click", async () => {
+      const email = (state.signinEmailDraft || "").trim();
+      if (!email) { if (input) input.style.borderColor = COLORS.warn; return; }
+      state.signinStatus = "sending";
+      render();
+      const error = await sendMagicLink(email);
+      state.signinStatus = error ? "error" : "sent";
+      render();
+    });
+    el("#backToWelcomeBtn")?.addEventListener("click", () => { state.screen = "welcome"; render(); });
   }
 
   if (state.screen === "quiz") {
@@ -631,11 +678,19 @@ function bindEvents() {
 
   if (state.screen === "dashboard") {
     el("#checkinBtn")?.addEventListener("click", enterToday);
-    el("#simDip")?.addEventListener("click", () => setTrendMode(-1));
-    el("#simSteady")?.addEventListener("click", () => setTrendMode(0));
-    el("#simRise")?.addEventListener("click", () => setTrendMode(1));
     el("#requizBtn")?.addEventListener("click", resetApp);
     el("#retakeBtn")?.addEventListener("click", resetApp);
+    const saveEmailInput = el("#saveEmailInput");
+    saveEmailInput?.addEventListener("input", (e) => { state.saveEmailDraft = e.target.value; });
+    el("#saveEmailBtn")?.addEventListener("click", async () => {
+      const email = (state.saveEmailDraft || "").trim();
+      if (!email) { if (saveEmailInput) saveEmailInput.style.borderColor = COLORS.warn; return; }
+      state.saveEmailStatus = "sending";
+      render();
+      const error = await linkEmailToAccount(email);
+      state.saveEmailStatus = error ? "error" : "sent";
+      render();
+    });
   }
 
   if (state.screen === "today") {
@@ -665,7 +720,7 @@ function bindEvents() {
     root.querySelectorAll("[data-save-moment]").forEach((btn) => {
       btn.addEventListener("click", () => handleSaveMoment(btn.dataset.saveMoment));
     });
-    el("#backToDashboardBtn")?.addEventListener("click", () => { state.screen = "dashboard"; render(); });
+    el("#backToDashboardBtn")?.addEventListener("click", enterDashboard);
   }
 }
 
@@ -696,8 +751,8 @@ function handleAnswer(opt) {
 // ---- Dashboard lifecycle ----
 function enterDashboard() {
   state.screen = "dashboard";
-  state.trendMode = 0;
   state.todayLog = undefined;
+  state.recentLogs = undefined;
   state.citation = null;
   state.citationFetchedForLever = null;
   render();
@@ -720,32 +775,24 @@ function enterDashboard() {
     });
   }
 }
-function setTrendMode(v) {
-  state.trendMode = v;
-  state.citation = null;
-  state.citationFetchedForLever = null;
-  render();
-  refreshDashboardData();
-}
-function currentDays() {
-  return Array.from({ length: 14 }, (_, i) => makeDay(state.track, i, state.trendMode));
-}
 function refreshDashboardData() {
-  const days = currentDays();
-  persistDailyLogs(state.track, days);
   fetchTodayLog(state.track).then((log) => { state.todayLog = log; render(); });
-
-  const rolling = rollingAverage(days);
-  if (rolling < 80) {
-    const weakestLever = findWeakestLever(state.track, days);
-    if (state.citationFetchedForLever !== weakestLever) {
-      state.citation = getCitation(state.track, weakestLever);
-      state.citationFetchedForLever = weakestLever;
-      fetchCitation(state.track, weakestLever).then((live) => {
-        if (live) { state.citation = live; render(); }
-      });
-    }
-  }
+  fetchRecentLogs(state.track).then((logs) => {
+    state.recentLogs = logs;
+    render();
+    // Only surface a "why you're dipping" citation once there's enough
+    // real history to make the finding meaningful, not from one day.
+    if (logs.length < 3) return;
+    const rolling = rollingAverage(logs);
+    if (rolling === null || rolling >= 80) return;
+    const weakestLever = findWeakestLever(state.track, logs);
+    if (!weakestLever || state.citationFetchedForLever === weakestLever) return;
+    state.citation = getCitation(state.track, weakestLever);
+    state.citationFetchedForLever = weakestLever;
+    fetchCitation(state.track, weakestLever).then((live) => {
+      if (live) { state.citation = live; render(); }
+    });
+  });
 }
 
 // ---- "Today" moments lifecycle: several small check-ins through
@@ -794,6 +841,26 @@ function renderWelcome() {
       <h1 class="h1">Built for the way<br/>you work.</h1>
       <p class="lede">A few honest questions about where things actually break down for you — then we'll match you to the system built for that.</p>
       <button class="primary-btn" id="startBtn">Begin →</button>
+      <button class="idea-toggle" id="goToSigninBtn" style="margin-top:20px">Already tracking on another device? Sign in</button>
+    </div>`;
+}
+
+function renderSignin() {
+  const sending = state.signinStatus === "sending";
+  return `
+    <div class="center">
+      <div class="eyebrow">SIGN IN</div>
+      <h2 class="h2">Pick up where you left off</h2>
+      <p class="lede">Enter the email you saved your progress with — we'll send a link that signs you in with all your history.</p>
+      <input id="signinEmailInput" type="email" placeholder="you@example.com" value="${state.signinEmailDraft || ""}"
+        style="width:100%;background:${COLORS.panel};border:1px solid ${COLORS.line};border-radius:10px;color:${COLORS.text};font-family:var(--sans);font-size:15px;padding:14px 16px;margin:20px 0;" />
+      ${state.signinStatus === "sent"
+        ? `<p class="lede" style="color:${COLORS.good}">Check your email for a sign-in link.</p>`
+        : state.signinStatus === "error"
+        ? `<p class="lede" style="color:${COLORS.warn}">Something went wrong — double check the email and try again.</p>`
+        : ""}
+      <button class="primary-btn" id="sendMagicLinkBtn" style="opacity:${sending ? 0.6 : 1}" ${sending ? "disabled" : ""}>${sending ? "Sending…" : "Send sign-in link"}</button>
+      <button class="ghost-btn" style="margin-top:14px" id="backToWelcomeBtn">Back</button>
     </div>`;
 }
 
@@ -905,12 +972,6 @@ function renderDefine() {
 function renderDashboard() {
   const track = state.track;
   const t = TRACKS[track];
-  const days = currentDays();
-  const rolling = rollingAverage(days);
-  const graduated = rolling >= 80;
-  const dipping = rolling < 80;
-  const weakestLever = dipping ? findWeakestLever(track, days) : null;
-  const leverLabel = weakestLever ? t.leverLabels[weakestLever] : null;
 
   const doneKeys = state.todayLog?.moment_timestamps ? Object.keys(state.todayLog.moment_timestamps) : [];
   const totalMoments = t.moments.length;
@@ -924,36 +985,84 @@ function renderDashboard() {
     : track === "energy"
     ? `<div class="panel" style="margin:14px 0;text-align:left"><div style="font-size:11px;color:${COLORS.muted};letter-spacing:1px;margin-bottom:4px">YOUR SLEEP TARGET</div><div style="font-size:14px">${state.sleepTarget}h a night</div></div>`
     : "";
+  const checkinBtnHTML = `
+      <button class="primary-btn" style="background:${t.color};margin-top:8px;opacity:${state.todayLog === undefined ? 0.6 : 1}" id="checkinBtn" ${state.todayLog === undefined ? "disabled" : ""}>${checkinBtnLabel}</button>`;
+
+  const saveProgressHTML = state.userIsAnonymous ? (() => {
+    const sending = state.saveEmailStatus === "sending";
+    if (state.saveEmailStatus === "sent") {
+      return `
+      <div class="panel" style="margin:14px 0;text-align:left;border-color:${t.color}55">
+        <div style="font-size:11px;color:${COLORS.muted};letter-spacing:1px;margin-bottom:6px">SAVE YOUR PROGRESS</div>
+        <div style="font-size:13px;color:${COLORS.good}">Check your email to confirm — once you do, this account works from any device.</div>
+      </div>`;
+    }
+    return `
+      <div class="panel" style="margin:14px 0;text-align:left;border-color:${t.color}55">
+        <div style="font-size:11px;color:${COLORS.muted};letter-spacing:1px;margin-bottom:6px">SAVE YOUR PROGRESS</div>
+        <div style="font-size:13px;color:${COLORS.muted};margin-bottom:10px">Add your email so you don't lose this if you switch devices or clear your browser.</div>
+        <input id="saveEmailInput" type="email" placeholder="you@example.com" value="${state.saveEmailDraft || ""}"
+          style="width:100%;background:${COLORS.panelRaised};border:1px solid ${COLORS.line};border-radius:8px;color:${COLORS.text};font-family:var(--sans);font-size:14px;padding:10px 12px;margin-bottom:8px;" />
+        ${state.saveEmailStatus === "error" ? `<div style="font-size:12px;color:${COLORS.warn};margin-bottom:8px">Something went wrong — try again.</div>` : ""}
+        <button class="ghost-btn" id="saveEmailBtn" style="border-color:${t.color};color:${t.color};opacity:${sending ? 0.6 : 1}" ${sending ? "disabled" : ""}>${sending ? "Saving…" : "Save my progress"}</button>
+      </div>`;
+  })() : "";
+
+  // Loading: still waiting on the real history to come back.
+  if (state.recentLogs === undefined) {
+    return `
+      <div class="center">
+        <div class="eyebrow" style="color:${t.color}">${t.name.toUpperCase()}</div>
+        <p class="lede">Loading your progress…</p>
+      </div>`;
+  }
+
+  // Empty: brand new track, nothing logged yet — no fake trend to show.
+  if (state.recentLogs.length === 0) {
+    return `
+      <div class="center">
+        <div class="eyebrow" style="color:${t.color}">${t.name.toUpperCase()} · GETTING STARTED</div>
+        <h2 class="h2">Your first check-in starts the trend.</h2>
+        <p class="lede">Once you've logged a few days, this is where your 7-day rolling average and history will show up.</p>
+        ${habitNote}
+        ${checkinBtnHTML}
+        ${saveProgressHTML}
+      </div>`;
+  }
+
+  const logs = state.recentLogs;
+  const rolling = rollingAverage(logs);
+  const graduated = rolling !== null && rolling >= 80;
+  const dipping = rolling !== null && rolling < 80;
+  const weakestLever = dipping && logs.length >= 3 ? findWeakestLever(track, logs) : null;
+  const leverLabel = weakestLever ? t.leverLabels[weakestLever] : null;
+  const dayLabel = `${logs.length} DAY${logs.length === 1 ? "" : "S"} LOGGED`;
+  const windowLabel = logs.length >= 7 ? "7-DAY ROLLING AVERAGE" : "AVERAGE SO FAR";
+  const sparklineHTML = logs.length >= 2
+    ? `<div style="margin-top:24px">${sparklineSVG(logs, t.color, 80)}</div>
+       <div style="font-size:12px;color:${COLORS.muted};margin-top:6px">last ${logs.length} day${logs.length === 1 ? "" : "s"} · dashed line marks the 80% steady-state threshold</div>`
+    : `<p class="lede" style="font-size:12.5px;margin-top:16px">Log a couple more days to start seeing your trend line here.</p>`;
 
   return `
     <div class="center">
-      <div class="eyebrow" style="color:${t.color}">${t.name.toUpperCase()} · DAY 14 · 7-DAY ROLLING AVERAGE</div>
+      <div class="eyebrow" style="color:${t.color}">${t.name.toUpperCase()} · ${dayLabel} · ${windowLabel}</div>
       ${arcSVG(rolling, t.color, 150, 12)}
       <div style="margin-top:10px;font-size:14px;color:${COLORS.muted}">${t.metricLabel}</div>
-      <div style="margin-top:24px">${sparklineSVG(days, t.color, 80)}</div>
-      <div style="font-size:12px;color:${COLORS.muted};margin-top:6px">last 14 days · dashed line marks the 80% steady-state threshold</div>
+      ${sparklineHTML}
 
       ${habitNote}
-
-      <button class="primary-btn" style="background:${t.color};margin-top:8px;opacity:${state.todayLog === undefined ? 0.6 : 1}" id="checkinBtn" ${state.todayLog === undefined ? "disabled" : ""}>${checkinBtnLabel}</button>
-
-      <div style="font-size:11px;color:${COLORS.muted};margin-top:26px;letter-spacing:1px">DEMO · PREVIEW TREND BEHAVIOR</div>
-      <div style="display:flex;gap:8px;margin-top:8px">
-        <button class="small-btn" id="simDip">simulate: dipping</button>
-        <button class="small-btn" id="simSteady">simulate: steady</button>
-        <button class="small-btn" id="simRise">simulate: rising</button>
-      </div>
-      <div style="margin-top:22px"></div>
+      ${checkinBtnHTML}
+      ${saveProgressHTML}
 
       ${graduated ? `
-        <div class="panel" style="border-color:${t.color};text-align:center">
+        <div class="panel" style="border-color:${t.color};text-align:center;margin-top:22px">
           <div style="font-size:15px;margin-bottom:4px">Holding at <strong style="color:${t.color}">${rolling}%</strong> — you're in steady state.</div>
           <div style="font-size:13px;color:${COLORS.muted};margin-bottom:14px">That's the goal. Quiet win, no action needed today.</div>
           <button class="primary-btn" style="background:${t.color}" id="requizBtn">See where I could grow next →</button>
         </div>` : ""}
 
       ${dipping && state.citation ? `
-        <div class="panel" style="border-color:${COLORS.warn}66;text-align:left">
+        <div class="panel" style="border-color:${COLORS.warn}66;text-align:left;margin-top:22px">
           <div style="font-size:12px;color:${COLORS.warn};letter-spacing:1px;margin-bottom:8px">YOUR ${leverLabel.toUpperCase()} IS DRAGGING THIS WEEK'S ${rolling}%</div>
           <div style="font-size:14px;line-height:1.6;margin-bottom:14px">${state.citation}</div>
           <button class="ghost-btn" id="retakeBtn">Retake the quiz now</button>
@@ -1059,8 +1168,23 @@ function renderToday() {
 // ============================================================
 // INIT
 // ============================================================
-ensureSession();
-render();
+async function bootApp() {
+  render(); // shows the "Loading your account…" boot screen immediately
+  const user = await ensureSession();
+  state.userIsAnonymous = user ? !!user.is_anonymous : true;
+  const assignment = await fetchAnyCurrentAssignment();
+  if (assignment) {
+    state.track = assignment.track_id;
+    state.habitLabel = assignment.habit_label || null;
+    state.habitTrigger = assignment.habit_trigger || null;
+    state.sleepTarget = assignment.sleep_target_hours ? Number(assignment.sleep_target_hours) : 8;
+    enterDashboard();
+  } else {
+    state.screen = "welcome";
+    render();
+  }
+}
+bootApp();
 </script>
 
 <script>
