@@ -88,6 +88,7 @@
   .insight-body.muted{ color: var(--ink-soft); font-size:12.5px; }
 
   .rail-hint{ font-size: 11.5px; line-height:1.5; color: var(--ink-soft); margin: 0 0 18px; padding: 10px 12px; background: var(--paper2); border-radius: 8px; }
+  .rail-hint b{ color: var(--ink); font-weight:600; }
 
   .rail{ position:relative; padding-left: 30px; }
   .rail-line{ position:absolute; left: 9px; top: 10px; bottom: 10px; width:2px; background: linear-gradient(180deg, var(--coral), var(--sage)); opacity:0.35; }
@@ -107,6 +108,7 @@
   .purpose{ font-size: 13px; line-height:1.55; color: var(--ink-soft); margin: 0 0 14px; }
 
   .research-fact{ background: linear-gradient(135deg, #FFF3DD, #FFEFE4); border: 1px solid #EBD19B; border-radius: 10px; padding: 11px 13px; font-size: 12px; line-height:1.55; color: var(--ink); margin: 0 0 14px; }
+  .research-fact b{ color: var(--marigold-deep); font-weight:700; }
   .research-fact .rf-label{ font-family: var(--mono); font-size: 9.5px; letter-spacing:0.08em; text-transform:uppercase; color: var(--marigold-deep); font-weight:700; margin-bottom: 4px; display:flex; align-items:center; gap:5px; }
 
   .items{ display:flex; flex-direction:column; gap:9px; margin-bottom: 10px; }
@@ -168,9 +170,6 @@
   .explainer p:last-child{ margin-bottom:0; }
   .explainer b{ color: var(--ink); font-weight:600; }
 
-  .hero-art{ border-radius: 20px; overflow:hidden; margin-bottom: 20px; background: linear-gradient(180deg, #FFFCF6, var(--surface)); border: 1px solid var(--line); box-shadow: 0 4px 20px rgba(38,54,44,0.06); }
-  .hero-art-svg{ width:100%; height: 150px; display:block; }
-
   .intro-lead{ font-size:13.5px; color:var(--ink-soft); line-height:1.6; margin: 0 0 18px; }
   .intro-wrap{ display:flex; flex-direction:column; gap:14px; }
   .choice-card{ border:1px solid var(--line); background:var(--surface); border-radius: 16px; padding:22px; }
@@ -192,6 +191,7 @@
   .qnum-icon{ width:14px; height:14px; flex:0 0 auto; }
   .build-q label{ display:block; font-family: var(--display); font-size: 16px; font-weight:600; color: var(--ink); margin-bottom: 4px; }
   .build-q .hint{ font-size: 12px; color: var(--ink-soft); margin-bottom: 10px; line-height:1.4; }
+  .build-q .hint b{ color: var(--marigold-deep); font-weight:600; }
   .build-q textarea{ width:100%; background: var(--cream); border: 1px solid var(--line); border-radius: 8px; color: var(--ink); font-family: var(--body); font-size: 13px; padding: 10px; resize: vertical; }
   .build-q textarea:focus{ outline:none; border-color: var(--marigold-deep); }
   .build-intro b{ color: var(--marigold-deep); font-weight:600; }
@@ -253,27 +253,10 @@
     <div id="introView" style="display:none">
       <div class="explainer">
         <h2>What is Steady State?</h2>
-        <p>Steady State helps you build small systems around your day. An anchor is a moment that already happens without fail, like your morning coffee or the second you get into bed. You attach a short checklist to that moment, and each day you check off what you actually did.</p>
-        <p><b>How to use it:</b> look through the example below to see a full working system in action, or answer four quick questions to build one around your own day. Either way, you'll check in daily, build up a real history, and get a short report on what's working and what to change.</p>
+        <p>Steady State helps you build small systems around your day. An <b>anchor</b> is a moment that already happens without fail, like your morning coffee or the second you get into bed. You attach a short checklist to that moment, and each day you check off what you actually did.</p>
+        <p><b>How to use it:</b> look through the example below to see a full working system in action, or answer four quick questions to build one around your own day. Either way, you'll check in <b>daily</b>, build up a real history, and get a short <b>report</b> on what's working and what to change.</p>
       </div>
 
-      <div class="hero-art">
-        <svg viewBox="0 0 600 210" class="hero-art-svg" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <linearGradient id="heroWaveFront" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#7E9B80" />
-              <stop offset="55%" stop-color="#E2A23A" />
-              <stop offset="100%" stop-color="#E07856" />
-            </linearGradient>
-          </defs>
-          <circle cx="120" cy="62" r="46" fill="#E2A23A" opacity="0.10" />
-          <circle cx="120" cy="62" r="32" fill="#E2A23A" opacity="0.16" />
-          <circle cx="120" cy="62" r="19" fill="#E2A23A" opacity="0.9" />
-          <path d="M0,150 C90,120 180,168 270,142 C360,116 450,158 600,128 L600,210 L0,210 Z" fill="#7E9B80" opacity="0.28" />
-          <path d="M0,172 C110,148 210,186 310,164 C420,140 500,178 600,156 L600,210 L0,210 Z" fill="#E07856" opacity="0.30" />
-          <path d="M0,192 C120,174 230,204 330,186 C430,168 520,200 600,182 L600,210 L0,210 Z" fill="url(#heroWaveFront)" opacity="0.85" />
-        </svg>
-      </div>
       <div id="continueBanner" class="choice-card" style="display:none; margin-bottom:16px;">
         <div class="eyebrow">Welcome back</div>
         <h3 id="continueName">Your system</h3>
@@ -285,13 +268,13 @@
         <div class="choice-card">
           <div class="eyebrow">Example system</div>
           <h3>The Steady State Example</h3>
-          <p>See a full working example. Four anchors are already built out, ready for you to look through before building your own. You can also just use it as-is.</p>
+          <p>See a <b>full working example</b>. Four anchors are already built out, ready for you to look through before building your own. You can also just use it as-is.</p>
           <button class="btn full" id="enterDefaultBtn">See the example →</button>
         </div>
         <div class="choice-card highlight">
           <div class="eyebrow">Built for you</div>
           <h3>Build Your Own System</h3>
-          <p>Answer four quick questions about your day and get a full four-anchor system built around your own life, with the same depth as the example, just yours.</p>
+          <p>Answer <b>four quick questions</b> about your day and get a full four-anchor system built around your own life, with the same depth as the example, just yours.</p>
           <button class="btn primary full" id="enterBuildBtn">Build My Own System →</button>
         </div>
       </div>
@@ -306,7 +289,7 @@
         <div id="insightBody" class="insight-body"></div>
       </div>
 
-      <p class="rail-hint">Checklist items are things you do in the moment. Any field underneath is a quick note you type in when you check back in here, not something you write during the moment itself.</p>
+      <p class="rail-hint"><b>Checklist items</b> are things you do in the moment. Any <b>field</b> underneath is a quick note you type in when you check back in here, not something you write during the moment itself.</p>
 
       <div id="anchorsRoot" class="rail">
         <div class="rail-line"></div>
@@ -328,7 +311,7 @@
     <div id="buildView" style="display:none">
       <div class="build-intro">
         <h2>Build your own system</h2>
-        <p>Here's how this works. You tell us one moment that already happens in your day, every day, like turning off your alarm. We turn that into what we call an anchor: a fixed point you build on. From then on, whenever that moment happens, you come back here and check off a short list tied to it. Four moments become four anchors, and together they make a simple system built around your actual day, not someone else's.</p>
+        <p>Here's how this works. You tell us <b>one moment that already happens</b> in your day, every day, like turning off your alarm. We turn that into what we call an <b>anchor</b>: a fixed point you build on. From then on, whenever that moment happens, you come back here and check off a short list tied to it. Four moments become four anchors, and together they make a simple system built around your actual day, not someone else's.</p>
       </div>
 
       <div class="build-q">
@@ -346,7 +329,7 @@
       <div class="build-q">
         <div class="qnum"><svg class="qnum-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="6.2" opacity="0.6"/><circle cx="12" cy="12" r="9.6" opacity="0.3"/></svg>Step 3: Focus</div>
         <label>Where in your day could 20 to 30 minutes go toward something worth learning or reading?</label>
-        <div class="hint">That's it, only 20 to 30 minutes. Pick a time that could realistically work, even if you're not doing it yet.</div>
+        <div class="hint"><b>That's it, only 20 to 30 minutes.</b> Pick a time that could realistically work, even if you're not doing it yet.</div>
         <textarea id="q3" rows="2" placeholder="Type your answer here"></textarea>
       </div>
       <div class="build-q">
@@ -936,10 +919,10 @@ function renderEditPanel(anchor){
 
 // --- Research facts: honest, sourced context for why each kind of anchor helps ---
 const RESEARCH_FACTS = {
-  morning: 'Mild dehydration, as little as 1 to 2% of body weight, measurably hurts concentration, memory, and mood, so a full glass of water genuinely helps. One honest caveat: research hasn\u2019t found morning specifically to be more powerful than any other time, it\u2019s just an easy moment to remember it.',
-  movement: 'A 2023 Columbia University study found that a 5 minute walk every 30 minutes lowered blood sugar spikes by 58% compared to sitting all day. Short, frequent movement breaks have also been shown to improve blood flow and sharpen focus more than one long session.',
-  focus: 'Memory consolidation favors little and often. Research on spaced learning consistently shows short daily sessions build retention better than occasional long ones, the same total time spread out beats a single binge.',
-  evening: 'A Baylor University sleep study (Scullin et al., 2018) found that people who spent just 5 minutes writing before bed fell asleep faster, and a to-do list format worked better than writing about the day\u2019s completed tasks.',
+  morning: 'Mild dehydration, as little as <b>1 to 2%</b> of body weight, measurably hurts concentration, memory, and mood, so a full glass of water genuinely helps. One honest caveat: research hasn\u2019t found morning specifically to be more powerful than any other time, it\u2019s just an easy moment to remember it.',
+  movement: 'A 2023 Columbia University study found that a <b>5 minute walk every 30 minutes</b> lowered blood sugar spikes by <b>58%</b> compared to sitting all day. Short, frequent movement breaks have also been shown to improve blood flow and sharpen focus more than one long session.',
+  focus: '<b>Little and often beats occasional and long.</b> Research on spaced learning consistently shows short daily sessions build retention better than binge sessions, even when the total time spent is the same.',
+  evening: 'A Baylor University sleep study (Scullin et al., 2018) found that people who spent just <b>5 minutes writing before bed</b> fell asleep faster, and a to-do list format worked better than writing about the day\u2019s completed tasks.',
 };
 
 function detectAnchorCategory(anchor){
@@ -1006,7 +989,7 @@ function renderAnchors(){
     if(category && RESEARCH_FACTS[category]){
       const fact = document.createElement('div');
       fact.className = 'research-fact';
-      fact.innerHTML = `<div class="rf-label">🧪 Why this works</div>${escapeHtml(RESEARCH_FACTS[category])}`;
+      fact.innerHTML = `<div class="rf-label">🧪 Why this works</div>${RESEARCH_FACTS[category]}`;
       card.appendChild(fact);
     }
 
